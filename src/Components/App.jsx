@@ -1,18 +1,20 @@
-import React from 'react'
-import { useState } from 'react'
-import reactLogo from '../assets/react.svg'
-import viteLogo from '/vite.svg'
-import '../styles/css/App.css'
-import MainPage from "./MainPage.jsx";
+import React, { useState } from 'react';
+import '../styles/css/App.css';
+import MainPage from './MainPage.jsx';
+import MenuComponent from './MenuComponent.jsx';
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [gameStarted, setGameStarted] = useState(false);
 
-  return (
-    <div>
-      <MainPage />
-    </div>
-  )
+    const startGame = () => {
+        setGameStarted(true);
+    };
+
+    return (
+        <div>
+            {gameStarted ? <MainPage /> : <MenuComponent startGame={startGame} />}
+        </div>
+    );
 }
 
-export default App
+export default App;

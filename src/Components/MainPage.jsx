@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
+import MenuComponent from "./MenuComponent.jsx";
 
 const MainPage = () => {
     useEffect(() => {
