@@ -1,0 +1,6 @@
+1- environnement show one by one (like previosuly)
+
+2- game data over the tries (average time)
+
+3- stategies -> french explaing -> logic  explanation
+
