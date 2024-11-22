@@ -15,7 +15,12 @@ function App() {
     return (
         <div>
             {gameStarted ? (
-                <MainPage sweetNumber={sweetNumber} studentNumber={studentNumber} />
+                <MainPage
+                    sweetNumber={sweetNumber}
+                    studentNumber={studentNumber}
+                    setSweetNumber={setSweetNumber}
+                    setStudentNumber={setStudentNumber}
+                />
             ) : (
                 <MenuComponent
                     startGame={startGame}

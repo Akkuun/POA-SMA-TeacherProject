@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
 import OptionsWindow from './OptionWindow.jsx';
 
-const MainPage = ({ sweetNumber, studentNumber }) => {
+const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber }) => {
     useEffect(() => {
         const app = new PIXI.Application({
             width: window.innerWidth,
@@ -29,7 +29,12 @@ const MainPage = ({ sweetNumber, studentNumber }) => {
 
     return (
         <div id="pixi-container">
-            <OptionsWindow sweetNumber={sweetNumber} studentNumber={studentNumber} />
+            <OptionsWindow
+                sweetNumber={sweetNumber}
+                studentNumber={studentNumber}
+                setSweetNumber={setSweetNumber}
+                setStudentNumber={setStudentNumber}
+            />
         </div>
     );
 }

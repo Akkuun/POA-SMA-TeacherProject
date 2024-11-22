@@ -1,4 +1,3 @@
-/* src/styles/css/OptionWindow.css */
 .options-window {
     display: flex;
     flex-direction: column;
@@ -13,4 +12,33 @@
     width: 15%; /* Set a fixed width */
     height: 15%; /* Set a fixed height */
     overflow: hidden; /* Hide overflow content */
+}
+
+.parameter {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.parameter p {
+    margin: 0;
+    flex-grow: 1;
+}
+
+.plus, .minus {
+    height: 20px;
+    width: 20px;
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    border-radius: 3px; /* Rounded corners */
+    margin-left: 5px; /* Add margin */
+    cursor: pointer; /* Pointer cursor on hover */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.plus:hover, .minus:hover {
+    background-color: #45a049; /* Darker green on hover */
 }
