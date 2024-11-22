@@ -1,0 +1,16 @@
+/* src/styles/css/OptionWindow.css */
+.options-window {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 2%;
+    left: 2%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    color: white;
+    padding: 1%;
+    border-radius: 5px;
+    z-index: 1000; /* Ensure this is above other elements */
+    width: 15%; /* Set a fixed width */
+    height: 15%; /* Set a fixed height */
+    overflow: hidden; /* Hide overflow content */
+}

@@ -1,9 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-const MenuComponent = ({ startGame }) => {
-    const [sweetNumber, setSweetNumber] = useState(0);
-    const [studentNumber, setStudentNumber] = useState(0);
-
+const MenuComponent = ({ startGame, sweetNumber, setSweetNumber, studentNumber, setStudentNumber }) => {
     return (
         <div>
             <h1>Menu</h1>
