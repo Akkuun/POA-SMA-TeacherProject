@@ -12,10 +12,6 @@ const MainPage = () => {
         let root = document.getElementById("root");
         root.appendChild(app.view);
 
-
-
-
-
         // Charger et afficher le terrain
         PIXI.Assets.load('../map.png').then((texture) => {
             const terrainSprite = new PIXI.Sprite(texture);
