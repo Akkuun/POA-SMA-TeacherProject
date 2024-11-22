@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
+import { Classroom } from './Classroom';
+import { Student } from './Student';
 
 const MainPage = () => {
     useEffect(() => {
@@ -9,18 +11,16 @@ const MainPage = () => {
             backgroundColor: 0x1099bb,
         });
 
+        let container = ;
+
         let root = document.getElementById("root");
         root.appendChild(app.view);
 
         // Charger et afficher le terrain
-        PIXI.Assets.load('../map.png').then((texture) => {
-            const terrainSprite = new PIXI.Sprite(texture);
-            terrainSprite.width = app.screen.width;  // Redimensionner pour prendre toute la largeur
-            terrainSprite.height = app.screen.height; // Redimensionner pour prendre toute la hauteur
-            terrainSprite.x = (app.screen.width - terrainSprite.width); // Centrer horizontalement
-            terrainSprite.y = (app.screen.height - terrainSprite.height); // Centrer verticalement
-            app.stage.addChild(terrainSprite);
-        });
+        const classroom = new Classroom(app);
+        container.appendChild(classroom)
+        
+        let studentTest = new Student({x:50, y:50}, app, classroom);
 
         // Nettoyer l'application PIXI lors du démontage du composant
         return () => {
