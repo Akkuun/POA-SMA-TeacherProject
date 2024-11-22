@@ -9,15 +9,16 @@ const MainPage = () => {
             backgroundColor: 0x1099bb,
         });
 
-        document.body.appendChild(app.view);
+        let root = document.getElementById("root");
+        root.appendChild(app.view);
 
         // Charger et afficher le terrain
         PIXI.Assets.load('../map.png').then((texture) => {
             const terrainSprite = new PIXI.Sprite(texture);
-            terrainSprite.width = app.screen.width ;  // Redimensionner pour prendre toute la largeur
-            terrainSprite.height = app.screen.height +app.screen.height/4; // Redimensionner pour prendre toute la hauteur
-            terrainSprite.x = (app.screen.width - terrainSprite.width) /2; // Centrer horizontalement
-            terrainSprite.y = (app.screen.height - terrainSprite.height) / 2; // Centrer verticalement
+            terrainSprite.width = app.screen.width;  // Redimensionner pour prendre toute la largeur
+            terrainSprite.height = app.screen.height; // Redimensionner pour prendre toute la hauteur
+            terrainSprite.x = (app.screen.width - terrainSprite.width); // Centrer horizontalement
+            terrainSprite.y = (app.screen.height - terrainSprite.height); // Centrer verticalement
             app.stage.addChild(terrainSprite);
         });
 
