@@ -11,6 +11,8 @@ export const Action = {
     DownRight: 'DownRight',
 };
 
+export const SpeedUnit = vecLength(DownRightVector) / 1000; // Movement speed unit, using the diagonal of the screen as a reference to make it independent of the screen size
+
 export class Agent {
     _sprite;
     _aabb;
@@ -19,7 +21,7 @@ export class Agent {
     _coordModele = {};
 
     // Gameplay variables
-    _speed = vecLength(DownRightVector) / 300; // Movement speed, using the diagonal of the screen as a reference to make it independent of the screen size
+    _speed = 2.5; 
 
     constructor(p_coordModele, p_app, p_classroom) {
         this._coordModele = p_coordModele;
@@ -42,32 +44,32 @@ export class Agent {
     move(action) {
         switch(action) {
             case Action.Up:
-                this._coordModele.y = Math.max(CoordInterval.min.y, this._coordModele.y - this._speed);
+                this._coordModele.y = Math.max(CoordInterval.min.y, this._coordModele.y - this._speed * SpeedUnit);
                 break;
             case Action.Down:
-                this._coordModele.y = Math.min(CoordInterval.max.y, this._coordModele.y + this._speed);
+                this._coordModele.y = Math.min(CoordInterval.max.y, this._coordModele.y + this._speed * SpeedUnit);
                 break;
             case Action.Left:
-                this._coordModele.x = Math.max(CoordInterval.min.x, this._coordModele.x - this._speed);
+                this._coordModele.x = Math.max(CoordInterval.min.x, this._coordModele.x - this._speed * SpeedUnit);
                 break;
             case Action.Right:
-                this._coordModele.x = Math.min(CoordInterval.max.x, this._coordModele.x + this._speed);
+                this._coordModele.x = Math.min(CoordInterval.max.x, this._coordModele.x + this._speed * SpeedUnit);
                 break;
             case Action.UpLeft:
-                this._coordModele.x = Math.max(CoordInterval.min.x, this._coordModele.x - this._speed);
-                this._coordModele.y = Math.max(CoordInterval.min.y, this._coordModele.y - this._speed);
+                this._coordModele.x = Math.max(CoordInterval.min.x, this._coordModele.x - this._speed * SpeedUnit);
+                this._coordModele.y = Math.max(CoordInterval.min.y, this._coordModele.y - this._speed * SpeedUnit);
                 break;
             case Action.UpRight:
-                this._coordModele.x = Math.min(CoordInterval.max.x, this._coordModele.x + this._speed);
-                this._coordModele.y = Math.max(CoordInterval.min.y, this._coordModele.y - this._speed);
+                this._coordModele.x = Math.min(CoordInterval.max.x, this._coordModele.x + this._speed * SpeedUnit);
+                this._coordModele.y = Math.max(CoordInterval.min.y, this._coordModele.y - this._speed * SpeedUnit);
                 break;
             case Action.DownLeft:
-                this._coordModele.x = Math.max(CoordInterval.min.x, this._coordModele.x - this._speed);
-                this._coordModele.y = Math.min(CoordInterval.max.y, this._coordModele.y + this._speed);
+                this._coordModele.x = Math.max(CoordInterval.min.x, this._coordModele.x - this._speed * SpeedUnit);
+                this._coordModele.y = Math.min(CoordInterval.max.y, this._coordModele.y + this._speed * SpeedUnit);
                 break;
             case Action.DownRight:
-                this._coordModele.x = Math.min(CoordInterval.max.x, this._coordModele.x + this._speed);
-                this._coordModele.y = Math.min(CoordInterval.max.y, this._coordModele.y + this._speed);
+                this._coordModele.x = Math.min(CoordInterval.max.x, this._coordModele.x + this._speed * SpeedUnit);
+                this._coordModele.y = Math.min(CoordInterval.max.y, this._coordModele.y + this._speed * SpeedUnit);
                 break;
             default:
                 break;
