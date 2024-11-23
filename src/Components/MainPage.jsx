@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
 import Classroom from './Classroom';
 import Student from './Student';
+import { Action } from './Agent';
+import { CoordInterval } from './Global';
 
 const MainPage = () => {
     useEffect(() => {
@@ -15,9 +17,10 @@ const MainPage = () => {
         root.appendChild(app.view);
 
         const classroom = new Classroom(app);
+        let nstudent = 20;
 
-        for (let i = 0; i < 5; i++) {
-            const student = new Student({x: Math.random() * 100, y: Math.random() * 100}, app, classroom);
+        for (let i = 0; i < nstudent; i++) {
+            classroom.addStudent(new Student({x: Math.random() * CoordInterval.max.x, y: Math.random() * CoordInterval.max.y}, app, classroom));
         }
 
         // Charger et afficher le terrain
@@ -32,19 +35,33 @@ const MainPage = () => {
         });
 
         // Charger et afficher les students
-        for (let i = 0; i < 5; i++) {
+        for (let student of classroom._students) {
             PIXI.Assets.load('../../src/assets/student.png').then((texture) => {
                 const studentSprite = new PIXI.Sprite(texture);
                 studentSprite.zIndex = 10;
                 app.stage.addChild(studentSprite);
-                classroom._students[i].setSprite(studentSprite);
-                classroom._students[i].display();
+                student.setSprite(studentSprite);
+                student.display();
             });
         }
 
         app.ticker.add(() => {
-            for (let i = 0; i < 5; i++) {
-                classroom._students[i].performAgentAction();
+            for (let i = 0; i < nstudent; i++) {
+                let student = classroom._students[i];
+                switch(i%4) {
+                    case 0:
+                        student.performAgentAction(Action.Up);
+                        break;
+                    case 1:
+                        student.performAgentAction(Action.Down);
+                        break;
+                    case 2:
+                        student.performAgentAction(Action.Left);
+                        break;
+                    case 3:
+                        student.performAgentAction(Action.Right);
+                        break;
+                }
             }
         });
 
