@@ -12,6 +12,9 @@ export class Agent {
     _coordModele = {};
     _coordDisplay = {};
 
+    // Gameplay variables
+    _speed = 1;
+
     constructor(p_coordModele, p_app, p_classroom) {
         this._coordModele = p_coordModele;
         this._app = p_app;

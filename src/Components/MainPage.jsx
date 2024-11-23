@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { Classroom } from './Classroom';
-import { Student } from './Student';
+import Classroom from './Classroom';
+import Student from './Student';
 
 const MainPage = () => {
     useEffect(() => {
@@ -11,16 +11,42 @@ const MainPage = () => {
             backgroundColor: 0x1099bb,
         });
 
-        let container = ;
-
         let root = document.getElementById("root");
         root.appendChild(app.view);
 
-        // Charger et afficher le terrain
         const classroom = new Classroom(app);
-        container.appendChild(classroom)
-        
-        let studentTest = new Student({x:50, y:50}, app, classroom);
+
+        for (let i = 0; i < 5; i++) {
+            const student = new Student({x: Math.random() * 100, y: Math.random() * 100}, app, classroom);
+        }
+
+        // Charger et afficher le terrain
+        PIXI.Assets.load('../../src/assets/map.png').then((texture) => {
+            const terrainSprite = new PIXI.Sprite(texture);
+            terrainSprite.width = window.innerWidth;  // Redimensionner pour prendre toute la largeur
+            terrainSprite.height = window.innerHeight; // Redimensionner pour prendre toute la hauteur
+            terrainSprite.x = (window.innerWidth - terrainSprite.width); // Centrer horizontalement
+            terrainSprite.y = (window.innerHeight - terrainSprite.height); // Centrer verticalement
+            terrainSprite.zIndex = 0;
+            app.stage.addChild(terrainSprite);
+        });
+
+        // Charger et afficher les students
+        for (let i = 0; i < 5; i++) {
+            PIXI.Assets.load('../../src/assets/student.png').then((texture) => {
+                const studentSprite = new PIXI.Sprite(texture);
+                studentSprite.zIndex = 10;
+                app.stage.addChild(studentSprite);
+                classroom._students[i].setSprite(studentSprite);
+                classroom._students[i].display();
+            });
+        }
+
+        app.ticker.add(() => {
+            for (let i = 0; i < 5; i++) {
+                classroom._students[i].performAgentAction();
+            }
+        });
 
         // Nettoyer l'application PIXI lors du démontage du composant
         return () => {
