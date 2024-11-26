@@ -22,7 +22,7 @@ const MainPage = () => {
 
         for (let i = 0; i < nstudent; i++) {
             classroom.addStudent(new Student({x: Math.random() * CoordInterval.max.x, y: Math.random() * CoordInterval.max.y}, app, classroom));
-            classroom.addDesk(new Desk(15, 15, 0.7, 0.7, {x: 0, y: 0}, app));
+            classroom.addDesk(new Desk(400, 400, 70, 70, {x: 0, y: 0}, app));
         }
 
         // Charger et afficher le terrain
@@ -40,12 +40,14 @@ const MainPage = () => {
         for (let desk of classroom._desks) {
             PIXI.Assets.load('../../src/assets/student_desk.png').then((texture) => {
                 const deskSprite = new PIXI.Sprite(texture);
-                deskSprite.zIndex = 5;
-                deskSprite.width = desk.width * 100; // Redimensionner pour prendre toute la largeur
-                deskSprite.height = desk.height * 100; // Redimensionner pour prendre toute la hauteur
-                deskSprite.x = (window.innerWidth - deskSprite.width); // Centrer horizontalement
-                deskSprite.y = (window.innerHeight - deskSprite.height); // Centrer verticalement
+                deskSprite.width = desk.width;
+                deskSprite.height = desk.height;
+                deskSprite.x = desk._coordModele.x;
+                deskSprite.y = desk._coordModele.y;
+                deskSprite.zIndex = 5000;
                 app.stage.addChild(deskSprite);
+                desk.setSprite(deskSprite);
+                desk.display();
             });
         }
 

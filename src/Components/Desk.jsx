@@ -8,7 +8,7 @@ export class Desk extends AABB {
     _coordModele;
 
     constructor(x, y, width, height, aabboffset, app) {
-        super({x: x, y: y}, {x: x + width, y: y + height}, app, false);
+        super({x: x, y: y}, {x: x + width, y: y + height}, app, true);
         super.move('x', aabboffset?.x || 0);
         super.move('y', aabboffset?.y || 0);
         this._width = width;
@@ -16,6 +16,8 @@ export class Desk extends AABB {
         this._coordModele = {x: x, y: y};
 
     }
+
+
 
     get width() {
         return this._width;
