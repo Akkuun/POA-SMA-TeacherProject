@@ -4,7 +4,7 @@ export class Classroom {
     // Environment
     _students = [];
     _teachers = [];
-    _tables = [];
+    _desks = [];
 
     constructor(app) {
         this._app = app;
@@ -13,6 +13,10 @@ export class Classroom {
 
     addStudent(student) {
         this._students.push(student);
+    }
+
+    addDesk(desk) {
+        this._desks.push(desk);
     }
 }
 

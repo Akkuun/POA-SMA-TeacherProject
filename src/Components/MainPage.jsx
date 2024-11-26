@@ -4,6 +4,7 @@ import Classroom from './Classroom';
 import Student from './Student';
 import { Action } from './Agent';
 import { CoordInterval } from './Global';
+import {Desk} from "./Desk.jsx";
 
 const MainPage = () => {
     useEffect(() => {
@@ -17,10 +18,11 @@ const MainPage = () => {
         root.appendChild(app.view);
 
         const classroom = new Classroom(app);
-        let nstudent = 20;
+        let nstudent = 1;
 
         for (let i = 0; i < nstudent; i++) {
             classroom.addStudent(new Student({x: Math.random() * CoordInterval.max.x, y: Math.random() * CoordInterval.max.y}, app, classroom));
+            classroom.addDesk(new Desk(15, 15, 1, 1, {x: 0, y: 0}, app));
         }
 
         // Charger et afficher le terrain
@@ -33,6 +35,19 @@ const MainPage = () => {
             terrainSprite.zIndex = 0;
             app.stage.addChild(terrainSprite);
         });
+
+        // Charger et afficher les bureaux
+        for (let desk of classroom._desks) {
+            PIXI.Assets.load('../../src/assets/student_desk.png').then((texture) => {
+                const deskSprite = new PIXI.Sprite(texture);
+                deskSprite.zIndex = 5;
+                deskSprite.width = desk.width * 100; // Redimensionner pour prendre toute la largeur
+                deskSprite.height = desk.height * 100; // Redimensionner pour prendre toute la hauteur
+                deskSprite.x = (window.innerWidth - deskSprite.width); // Centrer horizontalement
+                deskSprite.y = (window.innerHeight - deskSprite.height); // Centrer verticalement
+                app.stage.addChild(deskSprite);
+            });
+        }
 
         // Charger et afficher les students
         for (let student of classroom._students) {
