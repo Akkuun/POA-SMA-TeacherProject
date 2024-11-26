@@ -22,7 +22,7 @@ const MainPage = () => {
 
         for (let i = 0; i < nstudent; i++) {
             classroom.addStudent(new Student({x: Math.random() * CoordInterval.max.x, y: Math.random() * CoordInterval.max.y}, app, classroom));
-            classroom.addDesk(new Desk(15, 15, 10, 10, {x: 0, y: 0}, app));
+            classroom.addDesk(new Desk(15, 15, 1, 1, {x: 0, y: 0}, app));
         }
 
         // Charger et afficher le terrain
