@@ -15,6 +15,7 @@ export class Classroom {
         this._students.push(student);
     }
 
+
     addDesk(desk) {
         this._desks.push(desk);
     }

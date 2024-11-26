@@ -27,6 +27,7 @@ export class Desk extends AABB {
         return this._height;
     }
 
+
     setSprite(sprite) {
         this._sprite = sprite;
     }
