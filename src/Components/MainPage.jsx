@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
+import OptionsWindow from './OptionWindow.jsx';
 import Classroom from './Classroom';
 import Student from './Student';
 import { Action } from './Agent';
 import { CoordInterval } from './Global';
 
-const MainPage = () => {
+const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber }) => {
     useEffect(() => {
         const app = new PIXI.Application({
             width: window.innerWidth,  // Largeur de la fenêtre
@@ -73,7 +74,14 @@ const MainPage = () => {
     }, []);
 
     return (
-        <div id="pixi-container"></div>
+        <div id="pixi-container">
+            <OptionsWindow
+                sweetNumber={sweetNumber}
+                studentNumber={studentNumber}
+                setSweetNumber={setSweetNumber}
+                setStudentNumber={setStudentNumber}
+            />
+        </div>
     );
 }
 
