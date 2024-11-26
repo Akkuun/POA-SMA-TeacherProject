@@ -65,6 +65,7 @@ const MainPage = () => {
             }
         });
 
+
         // Nettoyer l'application PIXI lors du démontage du composant
         return () => {
             app.destroy(true, { children: true });
