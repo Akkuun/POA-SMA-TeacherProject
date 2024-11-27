@@ -1,9 +1,8 @@
 import { Agent } from './Agent';
-import { TopLeft, DownVector, RightVector, CoordInterval } from './Global';
 
 export class Student extends Agent {
-    constructor(p_coordModele, p_app, p_classroom) {
-        super(p_coordModele, p_app, p_classroom);
+    constructor(p_app, p_classroom) {
+        super(p_app, p_classroom);
     }
     
     performAgentAction(action) {

@@ -11,7 +11,9 @@ const MainPage = () => {
             width: window.innerWidth,  // Largeur de la fenêtre
             height: window.innerHeight, // Hauteur de la fenêtre
             backgroundColor: 0x1099bb,
+            sortableChildren: true,
         });
+        app.stage.sortableChildren = true;
 
         let root = document.getElementById("root");
         root.appendChild(app.view);
@@ -20,7 +22,7 @@ const MainPage = () => {
         let nstudent = 20;
 
         for (let i = 0; i < nstudent; i++) {
-            classroom.addStudent(new Student({x: Math.random() * CoordInterval.max.x, y: Math.random() * CoordInterval.max.y}, app, classroom));
+            classroom.addStudent(new Student(app, classroom));
         }
 
         // Charger et afficher le terrain
@@ -30,7 +32,7 @@ const MainPage = () => {
             terrainSprite.height = window.innerHeight; // Redimensionner pour prendre toute la hauteur
             terrainSprite.x = (window.innerWidth - terrainSprite.width); // Centrer horizontalement
             terrainSprite.y = (window.innerHeight - terrainSprite.height); // Centrer verticalement
-            terrainSprite.zIndex = 0;
+            terrainSprite.zIndex = -1;
             app.stage.addChild(terrainSprite);
         });
 
@@ -45,7 +47,7 @@ const MainPage = () => {
             });
         }
 
-        app.ticker.add(() => {
+        /*app.ticker.add(() => {
             for (let i = 0; i < nstudent; i++) {
                 let student = classroom._students[i];
                 switch(i%4) {
@@ -63,7 +65,7 @@ const MainPage = () => {
                         break;
                 }
             }
-        });
+        });*/
 
 
         // Nettoyer l'application PIXI lors du démontage du composant
