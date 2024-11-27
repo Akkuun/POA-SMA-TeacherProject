@@ -4,7 +4,10 @@ import OptionsWindow from './OptionWindow.jsx';
 import Classroom from './Classroom';
 import Student from './Student';
 import { Action } from './Agent';
-import { CoordInterval } from './Global';
+import { DEBUG } from './Global';
+
+const nstudent = 20;
+const maxFPS = 10; // Changes the game's speed
 
 const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber }) => {
     useEffect(() => {
@@ -12,16 +15,17 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
             width: window.innerWidth,  // Largeur de la fenêtre
             height: window.innerHeight, // Hauteur de la fenêtre
             backgroundColor: 0x1099bb,
+            sortableChildren: true,
         });
+        app.stage.sortableChildren = true;
 
         let root = document.getElementById("root");
         root.appendChild(app.view);
 
         const classroom = new Classroom(app);
-        let nstudent = 20;
 
         for (let i = 0; i < nstudent; i++) {
-            classroom.addStudent(new Student({x: Math.random() * CoordInterval.max.x, y: Math.random() * CoordInterval.max.y}, app, classroom));
+            classroom.addStudent(new Student(app, classroom));
         }
 
         // Charger et afficher le terrain
@@ -31,7 +35,7 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
             terrainSprite.height = window.innerHeight; // Redimensionner pour prendre toute la hauteur
             terrainSprite.x = (window.innerWidth - terrainSprite.width); // Centrer horizontalement
             terrainSprite.y = (window.innerHeight - terrainSprite.height); // Centrer verticalement
-            terrainSprite.zIndex = 0;
+            terrainSprite.zIndex = -1;
             app.stage.addChild(terrainSprite);
         });
 
@@ -40,12 +44,14 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
             PIXI.Assets.load('../../src/assets/student.png').then((texture) => {
                 const studentSprite = new PIXI.Sprite(texture);
                 studentSprite.zIndex = 10;
+                studentSprite.anchor.set(0.5, 1); // Set the anchor point to the center of the sprite to (1, 0.5) for each Agent's sprite to center it on the middle of the cell
                 app.stage.addChild(studentSprite);
                 student.setSprite(studentSprite);
                 student.display();
             });
         }
 
+        app.ticker.maxFPS = maxFPS;
         app.ticker.add(() => {
             for (let i = 0; i < nstudent; i++) {
                 let student = classroom._students[i];
@@ -64,6 +70,7 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
                         break;
                 }
             }
+            if (DEBUG) classroom.displayDebugGrid(); // RED = Student, GREEN = Teacher, BLUE = Empty, BLACK = Something else
         });
 
 
