@@ -3,7 +3,10 @@ import * as PIXI from 'pixi.js';
 import Classroom from './Classroom';
 import Student from './Student';
 import { Action } from './Agent';
-import { CoordInterval } from './Global';
+import { DEBUG } from './Global';
+
+const nstudent = 20;
+const maxFPS = 10; // Changes the game's speed
 
 const MainPage = () => {
     useEffect(() => {
@@ -19,7 +22,6 @@ const MainPage = () => {
         root.appendChild(app.view);
 
         const classroom = new Classroom(app);
-        let nstudent = 20;
 
         for (let i = 0; i < nstudent; i++) {
             classroom.addStudent(new Student(app, classroom));
@@ -41,13 +43,15 @@ const MainPage = () => {
             PIXI.Assets.load('../../src/assets/student.png').then((texture) => {
                 const studentSprite = new PIXI.Sprite(texture);
                 studentSprite.zIndex = 10;
+                studentSprite.anchor.set(0.5, 1); // Set the anchor point to the center of the sprite to (1, 0.5) for each Agent's sprite to center it on the middle of the cell
                 app.stage.addChild(studentSprite);
                 student.setSprite(studentSprite);
                 student.display();
             });
         }
 
-        /*app.ticker.add(() => {
+        app.ticker.maxFPS = maxFPS;
+        app.ticker.add(() => {
             for (let i = 0; i < nstudent; i++) {
                 let student = classroom._students[i];
                 switch(i%4) {
@@ -65,7 +69,8 @@ const MainPage = () => {
                         break;
                 }
             }
-        });*/
+            if (DEBUG) classroom.displayDebugGrid(); // RED = Student, GREEN = Teacher, BLUE = Empty, BLACK = Something else
+        });
 
 
         // Nettoyer l'application PIXI lors du démontage du composant

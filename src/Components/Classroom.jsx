@@ -1,6 +1,6 @@
-import globals from "globals";
-import {vecLength} from "./Global.jsx";
-import {TopLeft, DownVector, RightVector, CoordInterval} from "./Global.jsx";
+import {TopLeft, DownVector, RightVector} from "./Global.jsx";
+import {Student} from "./Student.jsx";
+import {Teacher} from "./Teacher.jsx";
 
 import * as PIXI from 'pixi.js';
 
@@ -11,13 +11,7 @@ export const classroom_ncols = 41;
 const cellUnit = {
     x: 1 / (classroom_ncols - 1),
     y: 1 / (classroom_nrows - 1)
-}
-
-const cellSize = {
-    x: vecLength(RightVector) * cellUnit.x,
-    y: vecLength(DownVector) * cellUnit.y
-}
-
+};
 
 export function GridCoordsToDisplayCoords(x, y) {
     let ret = {};
@@ -28,19 +22,35 @@ export function GridCoordsToDisplayCoords(x, y) {
     return ret;
 }
 
+export function GridCellCenterForDisplay(x, y) {
+    let ret = {};
+    let u = ((x + 0.5) / classroom_ncols);
+    let v = ((y + 0.5) / classroom_nrows);
+    ret.x = TopLeft.x + u * RightVector.x + v * DownVector.x;
+    ret.y = TopLeft.y + u * RightVector.y + v * DownVector.y;
+    return ret;
+}
+
 export class Classroom {
     _app;
 
     // Environment
-    _agentsWaitingToEnter = [];
-    _students = [];
-    _teachers = [];
-    _grid = []; // array that contains the grid of the classroom
+    _candyJar; // The candy jar
+    _agentsWaitingToEnter = []; // array that contains the agents waiting to enter the classroom for a start animation
+    _students = []; // array that contains the students in the classroom
+    _teachers = []; // array that contains the teachers in the classroom
+
+    _grid = []; // array that contains the grid of the classroom. Each cell can contain an agent or 0 if the cell is empty, or something else if the cell is occupied by something else (TODO)
 
     constructor(app) {
         this._app = app;
         this.initializeGrid();
-        this.displayGrid();
+    }
+
+    forceAgentPosForDebug(agent, pos) {
+        this._grid[agent._gridPos.y][agent._gridPos.x] = 0;
+        this._grid[pos.y][pos.x] = agent;
+        agent.setGridPos(pos);
     }
 
     addStudent(student) {
@@ -80,7 +90,7 @@ export class Classroom {
     }   
 
     moveAgent(agent, oldPos, newPos) {
-        if (this._grid[oldPos.y][oldPos.x] == agent) {
+        if (this._grid[oldPos.y][oldPos.x] == agent && this._grid[newPos.y][newPos.x] == 0) {
             this._grid[oldPos.y][oldPos.x] = 0;
             this._grid[newPos.y][newPos.x] = agent;
             return true;
@@ -101,7 +111,12 @@ export class Classroom {
         this._grid = grid;
     }
 
-    displayGrid() {
+    displayDebugGrid() {
+        if (this._app.stage.grid) { // Remove the previous grid
+            this._app.stage.removeChild(this._app.stage.grid);
+        }
+        let grid = new PIXI.Container();
+        grid.zIndex = 2;
         for (let i = 0; i < this._grid.length; i++) {
             for (let j = 0; j < this._grid[i].length; j++) {
                 let graphics = new PIXI.Graphics();
@@ -118,12 +133,25 @@ export class Classroom {
                 graphics.beginFill(0xFFFFFF);
                 graphics.drawPolygon(cellDisplay);
                 graphics.endFill();
+
+                // display a dot in the center of the cell
+                let dot = GridCellCenterForDisplay(j, i);
+                if (this._grid[i][j] instanceof Student) {
+                    graphics.beginFill(0xFF0000);
+                } else if (this._grid[i][j] instanceof Teacher) {
+                    graphics.beginFill(0x00FF00);
+                } else {
+                    graphics.beginFill(0x0000FF);
+                }
+                graphics.drawCircle(dot.x, dot.y, 3);
+                graphics.endFill();
             
                 graphics.zIndex = 2;
-                this._app.stage.addChild(graphics); 
+                grid.addChild(graphics); 
 
             }
         }
+        this._app.stage.addChild(grid);
     }
 
 }

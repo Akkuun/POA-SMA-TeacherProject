@@ -7,7 +7,6 @@ export class Teacher extends Agent {
     
     performAgentAction(action) {
         this.move(action);
-        if(this._sprite) this.display(); // Update the sprite position from the agent's model position
     }
 
 }

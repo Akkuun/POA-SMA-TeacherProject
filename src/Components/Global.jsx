@@ -23,3 +23,8 @@ export const CoordInterval = { // Interval of the classroom's coordinates adapte
     min:{x:0,y:0},
     max:{x:vecLength(RightVector),y:vecLength(DownVector)}
 };
+
+
+
+
+export const DEBUG = false;
