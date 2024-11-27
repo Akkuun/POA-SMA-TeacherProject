@@ -1,12 +1,13 @@
 import { GridCoordsToDisplayCoords } from './Classroom';
+import {WindowHeight, WindowWidth} from "./Global.jsx";
 
 export class Desk{
     _sprite;
     _coordGrid;
 
-    constructor(x, y, width, height) {
-        this._width = width;
-        this._height = height;
+    constructor(x, y) {
+        this._width = 30 / 545 * WindowWidth * 0.66;
+        this._height = 30 / 405 * WindowHeight * 50/68;
         this._coordGrid = {x: x, y: y};
 
     }

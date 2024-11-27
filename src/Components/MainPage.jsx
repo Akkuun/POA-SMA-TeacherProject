@@ -47,8 +47,12 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
                 alignXM = alignX;
             }
             classroom._grid[alignYM][alignXM] = 1; //occupied by a  desk
-            classroom.addDesk(new Desk(alignXM, alignYM, 50, 50));
+            classroom.addDesk(new Desk(alignXM, alignYM));
         }
+
+        console.log("alignX;"+alignX);
+        console.log("alignY;"+alignY);
+        console.log("Grid;"+classroom._grid);
 
         // Charger et afficher le terrain
         PIXI.Assets.load('../../src/assets/map.png').then((texture) => {
@@ -61,7 +65,6 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
             app.stage.addChild(terrainSprite);
         });
 
-        console.log(classroom._desks.length);
         // Charger et afficher les bureaux
         for (let desk of classroom._desks) {
             PIXI.Assets.load('../../src/assets/student_desk.png').then((texture) => {
