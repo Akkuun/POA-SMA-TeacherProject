@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
 import OptionsWindow from './OptionWindow.jsx';
-import Classroom from './Classroom';
+import Classroom, {classroom_ncols, classroom_nrows} from './Classroom';
 import Student from './Student';
 import { Action } from './Agent';
-import { DEBUG } from './Global';
+import {DEBUG, DownRightVector, TopLeft as cellUnit, vecLength} from './Global';
 import { CoordInterval } from './Global';
 import {Desk} from "./Desk.jsx";
 
@@ -24,17 +24,20 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         root.appendChild(app.view);
 
         const classroom = new Classroom(app);
-        let nstudent = 2;
+        let nstudent = 10;
 
         const alignX = Math.floor(Math.random() * nstudent);
+        const alignY = Math.floor(Math.random() * nstudent);
+        //espacment entre les bureaux de la classe de 3 cases en x et 2 cases en y
+        const gridCellX = (vecLength(DownRightVector)) / classroom_ncols;
+        console.log(gridCellX);
+        const spaceY = 2*(vecLength(DownRightVector))/classroom_nrows;
 
         classroom.addStudent(new Student(app, classroom));
         classroom.addStudent(new Student({x: Math.random() * CoordInterval.max.x, y: Math.random() * CoordInterval.max.y}, app, classroom));
 
         for (let i = 0; i < nstudent; i++) {
-            console.log("alignX: " + alignX);
-
-            classroom.addDesk(new Desk(3, 1, 50, 50));
+            classroom.addDesk(new Desk(0 + gridCellX/1000, 0, 50, 50));
         }
 
         // Charger et afficher le terrain
@@ -48,6 +51,7 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
             app.stage.addChild(terrainSprite);
         });
 
+        console.log(classroom._desks.length);
         // Charger et afficher les bureaux
         for (let desk of classroom._desks) {
             PIXI.Assets.load('../../src/assets/student_desk.png').then((texture) => {
