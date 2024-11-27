@@ -24,7 +24,8 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         root.appendChild(app.view);
 
         const classroom = new Classroom(app);
-        let nstudent = 30;
+        let nstudent = 13;
+        let nteacher = 1;
 
         const startRow = 4;
         const endRow = 25;
@@ -38,8 +39,7 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         let currentX = startCol;
         let currentY = startRow;
 
-        while (currentX !== endCol && currentY !== endRow || deskCount < nstudent) {
-
+        while (deskCount < nstudent && (currentX <= endCol || currentY <= endRow)) { // while there are still desks to place and we haven't reached the end of the classroom
             if (currentY > endRow) {
                 currentY = startRow;
                 currentX += spacingX;
@@ -47,15 +47,17 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
             if (currentX > endCol) {
                 break;
             }
-            if(classroom._grid[currentY][currentX] === 0) {
+            if (classroom._grid[currentY][currentX] === 0) {
                 classroom.addDesk(new Desk(currentX, currentY));
                 classroom._grid[currentY][currentX] = 1;
-                classroom._grid[currentY][currentX+1] = 1; //cause desk are 2x1
+                classroom._grid[currentY][currentX + 1] = 1; // because desks are 2x1
 
                 currentY += spacingY;
                 deskCount++;
+                console.log(deskCount);
             }
         }
+        console.log("while check finis : "+deskCount+" == "+ nstudent+ " ; "+currentX+" == "+ endCol +" ; "+currentY+" == "+ endRow+ " ; ");
 
 
         for (let i = 0; i < nstudent; i++) {
