@@ -47,10 +47,10 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         for (let desk of classroom._desks) {
             PIXI.Assets.load('../../src/assets/student_desk.png').then((texture) => {
                 const deskSprite = new PIXI.Sprite(texture);
-                deskSprite.zIndex = 5;
+                deskSprite.zIndex = 10;
                 deskSprite.width = desk.width;
                 deskSprite.height = desk.height;
-                deskSprite.anchor.set(0, 1);
+                deskSprite.anchor.set(desk._coordModele.x, desk._coordModele.y);
                 app.stage.addChild(deskSprite);
                 desk.setSprite(deskSprite);
                 desk.display();
