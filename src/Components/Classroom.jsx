@@ -35,9 +35,8 @@ export class Classroom {
     _app;
 
     // Environment
-    _students = [];
-    _teachers = [];
-    _desks = [];
+    _desksStudent = [];
+    _desksTeacher = [];
     _candyJar; // The candy jar
     _agentsWaitingToEnter = []; // array that contains the agents waiting to enter the classroom for a start animation
     _students = []; // array that contains the students in the classroom
@@ -63,8 +62,12 @@ export class Classroom {
     }
 
 
-    addDesk(desk) {
-        this._desks.push(desk);
+    addDeskStudent(desk) {
+        this._desksStudent.push(desk);
+    }
+
+    addDeskTeacher(desk) {
+        this._desksTeacher.push(desk);
     }
 
     addTeacher(teacher) {
@@ -85,7 +88,7 @@ export class Classroom {
             x: Math.floor(Math.random() * (classroom_ncols-1)),
             y: Math.floor(Math.random() * (classroom_nrows-1))
         }
-        while (this._grid[pos.y][pos.x] != 0) {
+        while (this._grid[pos.y][pos.x] !== 0) {
             pos = {
                 x: Math.floor(Math.random() * (classroom_ncols-1)),
                 y: Math.floor(Math.random() * (classroom_nrows-1))
@@ -98,7 +101,7 @@ export class Classroom {
     }
 
     moveAgent(agent, oldPos, newPos) {
-        if (this._grid[oldPos.y][oldPos.x] == agent && this._grid[newPos.y][newPos.x] == 0) {
+        if (this._grid[oldPos.y][oldPos.x] === agent && this._grid[newPos.y][newPos.x] === 0) {
             this._grid[oldPos.y][oldPos.x] = 0;
             this._grid[newPos.y][newPos.x] = agent;
             return true;
