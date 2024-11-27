@@ -30,7 +30,7 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         for (let i = 0; i < nstudent; i++) {
             classroom.addStudent(new Student(app, classroom));
             classroom.addStudent(new Student({x: Math.random() * CoordInterval.max.x, y: Math.random() * CoordInterval.max.y}, app, classroom));
-            classroom.addDesk(new Desk(400, 400, 70, 70, {x: 0, y: 0}, app));
+            classroom.addDesk(new Desk(1, 1, 50, 50));
         }
 
         // Charger et afficher le terrain
@@ -48,11 +48,10 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         for (let desk of classroom._desks) {
             PIXI.Assets.load('../../src/assets/student_desk.png').then((texture) => {
                 const deskSprite = new PIXI.Sprite(texture);
+                deskSprite.zIndex = 5;
                 deskSprite.width = desk.width;
                 deskSprite.height = desk.height;
-                deskSprite.x = desk._coordModele.x;
-                deskSprite.y = desk._coordModele.y;
-                deskSprite.zIndex = 5000;
+                deskSprite.anchor.set(0.5, 0.8);
                 app.stage.addChild(deskSprite);
                 desk.setSprite(deskSprite);
                 desk.display();
