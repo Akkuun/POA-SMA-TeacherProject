@@ -38,7 +38,7 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         let currentX = startCol;
         let currentY = startRow;
 
-        while (currentX !== endCol && currentY !== endRow) {
+        while (currentX !== endCol && currentY !== endRow || deskCount < nstudent) {
 
             if (currentY > endRow) {
                 currentY = startRow;
@@ -54,10 +54,6 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
 
                 currentY += spacingY;
                 deskCount++;
-            }
-
-            if(deskCount === nstudent){
-                break;
             }
         }
 
