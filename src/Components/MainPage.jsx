@@ -24,35 +24,47 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         root.appendChild(app.view);
 
         const classroom = new Classroom(app);
-        let nstudent = 10;
+        let nstudent = 30;
 
-        let alignX = Math.floor(Math.random() * (classroom_ncols - 14)) + 4;
-        let alignY = Math.floor(Math.random() * (classroom_nrows-4))+1;
+        const startRow = 4;
+        const endRow = 25;
+        const startCol = 4;
+        const endCol = 32;
 
-        classroom.addStudent(new Student(app, classroom));
-        classroom.addStudent(new Student({x: Math.random() * CoordInterval.max.x, y: Math.random() * CoordInterval.max.y}, app, classroom));
+        const spacingX = 5;
+        const spacingY = 5;
 
-        let alignXM = alignX;
-        let alignYM = alignY;
-        for (let i = 0; i < nstudent; i++) {
-            alignYM += 4; //move down to create a new row of desks
-            if(alignYM >= classroom_nrows-4) { //if the row is full, move to the next colomn
-                alignYM = alignY; //reset the row
-                alignXM += 4; //move to the next colomn
+        let deskCount = 0;
+        let currentX = startCol;
+        let currentY = startRow;
+
+        while (currentX !== endCol && currentY !== endRow) {
+
+            if (currentY > endRow) {
+                currentY = startRow;
+                currentX += spacingX;
             }
-            if(classroom._grid[alignYM][alignXM] === 1) { //if the cell is occupied by a desk, move to the next cell
-                alignY +=5;
-                alignYM = alignY;
-                alignX += 5;
-                alignXM = alignX;
+            if (currentX > endCol) {
+                break;
             }
-            classroom._grid[alignYM][alignXM] = 1; //occupied by a  desk
-            classroom.addDesk(new Desk(alignXM, alignYM));
+            if(classroom._grid[currentY][currentX] === 0) {
+                classroom.addDesk(new Desk(currentX, currentY));
+                classroom._grid[currentY][currentX] = 1;
+                classroom._grid[currentY][currentX+1] = 1; //cause desk are 2x1
+
+                currentY += spacingY;
+                deskCount++;
+            }
+
+            if(deskCount === nstudent){
+                break;
+            }
         }
 
-        console.log("alignX;"+alignX);
-        console.log("alignY;"+alignY);
-        console.log("Grid;"+classroom._grid);
+
+        for (let i = 0; i < nstudent; i++) {
+            classroom.addStudent(new Student(app, classroom));
+        }
 
         // Charger et afficher le terrain
         PIXI.Assets.load('../../src/assets/map.png').then((texture) => {

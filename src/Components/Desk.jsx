@@ -1,6 +1,9 @@
 import { GridCoordsToDisplayCoords } from './Classroom';
 import {WindowHeight, WindowWidth} from "./Global.jsx";
 
+/**
+ * @class Desk : not only for student but also for teacher
+ */
 export class Desk{
     _sprite;
     _coordGrid;
