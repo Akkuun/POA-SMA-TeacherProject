@@ -8,7 +8,6 @@ import { DEBUG } from './Global';
 import { CoordInterval } from './Global';
 import {Desk} from "./Desk.jsx";
 
-const nstudent = 20;
 const maxFPS = 10; // Changes the game's speed
 
 const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber }) => {
@@ -30,7 +29,7 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         for (let i = 0; i < nstudent; i++) {
             classroom.addStudent(new Student(app, classroom));
             classroom.addStudent(new Student({x: Math.random() * CoordInterval.max.x, y: Math.random() * CoordInterval.max.y}, app, classroom));
-            classroom.addDesk(new Desk(1, 1, 50, 50));
+            classroom.addDesk(new Desk(0, 1, 50, 50));
         }
 
         // Charger et afficher le terrain
