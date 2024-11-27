@@ -35,12 +35,12 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         let alignXM = alignX;
         let alignYM = alignY;
         for (let i = 0; i < nstudent; i++) {
-            alignYM += 4;
-            if(alignYM >= classroom_nrows-4) {
-                alignYM = alignY;
-                alignXM += 4;
+            alignYM += 4; //move down to create a new row of desks
+            if(alignYM >= classroom_nrows-4) { //if the row is full, move to the next colomn
+                alignYM = alignY; //reset the row
+                alignXM += 4; //move to the next colomn
             }
-            if(classroom._grid[alignYM][alignXM] === 1) {
+            if(classroom._grid[alignYM][alignXM] === 1) { //if the cell is occupied by a desk, move to the next cell
                 alignY +=5;
                 alignYM = alignY;
                 alignX += 5;
