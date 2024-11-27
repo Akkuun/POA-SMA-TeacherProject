@@ -35,6 +35,8 @@ export class Classroom {
     _app;
 
     // Environment
+    _desksStudent = [];
+    _desksTeacher = [];
     _candyJar; // The candy jar
     _agentsWaitingToEnter = []; // array that contains the agents waiting to enter the classroom for a start animation
     _students = []; // array that contains the students in the classroom
@@ -59,6 +61,15 @@ export class Classroom {
         this.agentEnter();
     }
 
+
+    addDeskStudent(desk) {
+        this._desksStudent.push(desk);
+    }
+
+    addDeskTeacher(desk) {
+        this._desksTeacher.push(desk);
+    }
+
     addTeacher(teacher) {
         this._teachers.push(teacher);
         this.addAgent(teacher);
@@ -77,7 +88,7 @@ export class Classroom {
             x: Math.floor(Math.random() * (classroom_ncols-1)),
             y: Math.floor(Math.random() * (classroom_nrows-1))
         }
-        while (this._grid[pos.y][pos.x] != 0) {
+        while (this._grid[pos.y][pos.x] !== 0) {
             pos = {
                 x: Math.floor(Math.random() * (classroom_ncols-1)),
                 y: Math.floor(Math.random() * (classroom_nrows-1))
@@ -87,17 +98,17 @@ export class Classroom {
         // End of the bloc
 
         agent.setGridPos(pos);
-    }   
+    }
 
     moveAgent(agent, oldPos, newPos) {
-        if (this._grid[oldPos.y][oldPos.x] == agent && this._grid[newPos.y][newPos.x] == 0) {
+        if (this._grid[oldPos.y][oldPos.x] === agent && this._grid[newPos.y][newPos.x] === 0) {
             this._grid[oldPos.y][oldPos.x] = 0;
             this._grid[newPos.y][newPos.x] = agent;
             return true;
         } else {
             return false;
         }
-    } 
+    }
 
     initializeGrid() {
         let grid = [];
@@ -145,9 +156,9 @@ export class Classroom {
                 }
                 graphics.drawCircle(dot.x, dot.y, 3);
                 graphics.endFill();
-            
+
                 graphics.zIndex = 2;
-                grid.addChild(graphics); 
+                grid.addChild(graphics);
 
             }
         }
