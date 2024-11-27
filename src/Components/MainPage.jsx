@@ -51,7 +51,7 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
                 deskSprite.zIndex = 5;
                 deskSprite.width = desk.width;
                 deskSprite.height = desk.height;
-                deskSprite.anchor.set(0.5, 1);
+                deskSprite.anchor.set(0, 1);
                 app.stage.addChild(deskSprite);
                 desk.setSprite(deskSprite);
                 desk.display();
