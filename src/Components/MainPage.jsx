@@ -26,8 +26,8 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         const classroom = new Classroom(app);
         let nstudent = 10;
 
-        const alignX = Math.floor(Math.random() * (classroom_ncols - 10)) + 1;
-        const alignY = Math.floor(Math.random() * (classroom_nrows-4))+1;
+        let alignX = Math.floor(Math.random() * (classroom_ncols - 14)) + 4;
+        let alignY = Math.floor(Math.random() * (classroom_nrows-4))+1;
 
         classroom.addStudent(new Student(app, classroom));
         classroom.addStudent(new Student({x: Math.random() * CoordInterval.max.x, y: Math.random() * CoordInterval.max.y}, app, classroom));
@@ -35,16 +35,18 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         let alignXM = alignX;
         let alignYM = alignY;
         for (let i = 0; i < nstudent; i++) {
-            alignXM += 4;
-            const posX = alignX;
-            if(alignXM >= classroom_ncols-10) {
-                alignXM = alignX;
-                alignYM += 4;
-                if(alignYM >= classroom_nrows-4) {
-                    alignYM = alignY+1;
-                    alignXM = alignX+1;
-                }
+            alignYM += 4;
+            if(alignYM >= classroom_nrows-4) {
+                alignYM = alignY;
+                alignXM += 4;
             }
+            if(classroom._grid[alignYM][alignXM] === 1) {
+                alignY +=5;
+                alignYM = alignY;
+                alignX += 5;
+                alignXM = alignX;
+            }
+            classroom._grid[alignYM][alignXM] = 1; //occupied by a  desk
             classroom.addDesk(new Desk(alignXM, alignYM, 50, 50));
         }
 
