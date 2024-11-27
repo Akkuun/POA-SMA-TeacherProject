@@ -1,16 +1,37 @@
-import React from 'react'
-import { useState } from 'react'
-import '../styles/css/App.css'
-import MainPage from "./MainPage.jsx";
+import React, { useState } from 'react';
+import '../styles/css/App.css';
+import MainPage from './MainPage.jsx';
+import MenuComponent from './MenuComponent.jsx';
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [gameStarted, setGameStarted] = useState(false);
+    const [sweetNumber, setSweetNumber] = useState(1);
+    const [studentNumber, setStudentNumber] = useState(1);
 
-  return (
-    <div>
-      <MainPage />
-    </div>
-  )
+    const startGame = () => {
+        setGameStarted(true);
+    };
+
+    return (
+        <div>
+            {gameStarted ? (
+                <MainPage
+                    sweetNumber={sweetNumber}
+                    studentNumber={studentNumber}
+                    setSweetNumber={setSweetNumber}
+                    setStudentNumber={setStudentNumber}
+                />
+            ) : (
+                <MenuComponent
+                    startGame={startGame}
+                    sweetNumber={sweetNumber}
+                    setSweetNumber={setSweetNumber}
+                    studentNumber={studentNumber}
+                    setStudentNumber={setStudentNumber}
+                />
+            )}
+        </div>
+    );
 }
 
-export default App
+export default App;
