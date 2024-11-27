@@ -50,7 +50,7 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
                 deskSprite.zIndex = 10;
                 deskSprite.width = desk.width;
                 deskSprite.height = desk.height;
-                deskSprite.anchor.set(desk._coordModele.x, desk._coordModele.y);
+                deskSprite.anchor.set(desk._coordGrid.x, desk._coordGrid.y);
                 app.stage.addChild(deskSprite);
                 desk.setSprite(deskSprite);
                 desk.display();

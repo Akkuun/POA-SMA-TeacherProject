@@ -2,12 +2,12 @@ import { GridCoordsToDisplayCoords } from './Classroom';
 
 export class Desk{
     _sprite;
-    _coordModele;
+    _coordGrid;
 
     constructor(x, y, width, height) {
         this._width = width;
         this._height = height;
-        this._coordModele = {x: x, y: y};
+        this._coordGrid = {x: x, y: y};
 
     }
 
@@ -27,8 +27,8 @@ export class Desk{
     }
 
     display() {
-        this._sprite.x = GridCoordsToDisplayCoords(this._coordModele.x, this._coordModele.y).x;
-        this._sprite.y = GridCoordsToDisplayCoords(this._coordModele.x, this._coordModele.y).y;
+        this._sprite.x = GridCoordsToDisplayCoords(this._coordGrid.x, this._coordGrid.y).x;
+        this._sprite.y = GridCoordsToDisplayCoords(this._coordGrid.x, this._coordGrid.y).y;
     }
 
 }
