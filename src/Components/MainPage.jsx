@@ -24,12 +24,17 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         root.appendChild(app.view);
 
         const classroom = new Classroom(app);
-        let nstudent = 1;
+        let nstudent = 2;
+
+        const alignX = Math.floor(Math.random() * nstudent);
+
+        classroom.addStudent(new Student(app, classroom));
+        classroom.addStudent(new Student({x: Math.random() * CoordInterval.max.x, y: Math.random() * CoordInterval.max.y}, app, classroom));
 
         for (let i = 0; i < nstudent; i++) {
-            classroom.addStudent(new Student(app, classroom));
-            classroom.addStudent(new Student({x: Math.random() * CoordInterval.max.x, y: Math.random() * CoordInterval.max.y}, app, classroom));
-            classroom.addDesk(new Desk(0, 1, 50, 50));
+            console.log("alignX: " + alignX);
+
+            classroom.addDesk(new Desk(3, 1, 50, 50));
         }
 
         // Charger et afficher le terrain
@@ -50,7 +55,7 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
                 deskSprite.zIndex = 10;
                 deskSprite.width = desk.width;
                 deskSprite.height = desk.height;
-                deskSprite.anchor.set(desk._coordGrid.x, desk._coordGrid.y);
+                deskSprite.anchor.set(0 , 1);
                 app.stage.addChild(deskSprite);
                 desk.setSprite(deskSprite);
                 desk.display();
@@ -70,7 +75,7 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         }
 
         app.ticker.maxFPS = maxFPS;
-        app.ticker.add(() => {
+        /*app.ticker.add(() => {
             for (let i = 0; i < nstudent; i++) {
                 let student = classroom._students[i];
                 switch(i%4) {
@@ -89,7 +94,7 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
                 }
             }
             if (DEBUG) classroom.displayDebugGrid(); // RED = Student, GREEN = Teacher, BLUE = Empty, BLACK = Something else
-        });
+        });*/
 
 
         // Nettoyer l'application PIXI lors du démontage du composant
