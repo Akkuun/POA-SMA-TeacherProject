@@ -26,18 +26,26 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         const classroom = new Classroom(app);
         let nstudent = 10;
 
-        const alignX = Math.floor(Math.random() * nstudent);
-        const alignY = Math.floor(Math.random() * nstudent);
-        //espacment entre les bureaux de la classe de 3 cases en x et 2 cases en y
-        const gridCellX = (vecLength(DownRightVector)) / classroom_ncols;
-        console.log(gridCellX);
-        const spaceY = 2*(vecLength(DownRightVector))/classroom_nrows;
+        const alignX = Math.floor(Math.random() * (classroom_ncols - 10)) + 1;
+        const alignY = Math.floor(Math.random() * (classroom_nrows-1))+1;
 
         classroom.addStudent(new Student(app, classroom));
         classroom.addStudent(new Student({x: Math.random() * CoordInterval.max.x, y: Math.random() * CoordInterval.max.y}, app, classroom));
 
+        let alignXM = alignX;
+        let alignYM = alignY;
         for (let i = 0; i < nstudent; i++) {
-            classroom.addDesk(new Desk(0 + gridCellX/1000, 0, 50, 50));
+            alignXM += 4;
+            const posX = alignX;
+            if(alignXM >= classroom_ncols-10) {
+                alignXM = alignX;
+                alignYM += 3;
+                if(alignYM >= classroom_nrows-1) {
+                    alignYM = alignY+1;
+                    alignXM = alignX+1;
+                }
+            }
+            classroom.addDesk(new Desk(alignXM, alignYM, 50, 50));
         }
 
         // Charger et afficher le terrain
