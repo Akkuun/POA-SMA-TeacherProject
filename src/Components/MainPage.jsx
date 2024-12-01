@@ -1,15 +1,17 @@
-import React, { useEffect } from 'react';
+
 import * as PIXI from 'pixi.js';
 import OptionsWindow from './OptionWindow.jsx';
-import Classroom, {classroom_ncols, classroom_nrows} from './Classroom';
+import Classroom, {classroom_ncols} from './Classroom';
 import Student from './Student';
-import { Action } from './Agent';
-import {DEBUG, DownRightVector, TopLeft as cellUnit, vecLength} from './Global';
-import { CoordInterval } from './Global';
+import {Action, Agent} from './Agent';
+import {DEBUG} from './Global';
 import {Desk} from "./Desk.jsx";
+import {useEffect} from "react";
+import Graph from "./Graph.js";
 
 const maxFPS = 10; // Changes the game's speed
 
+// eslint-disable-next-line react/prop-types
 const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber }) => {
     useEffect(() => {
         const app = new PIXI.Application({
@@ -24,7 +26,7 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         root.appendChild(app.view);
 
         const classroom = new Classroom(app);
-        let nstudent = 13;
+        let nstudent = studentNumber;
         let nteacher = 2;
 
         const startRow = 4;
@@ -149,24 +151,46 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
             });
         }
 
+
+        let grid2 = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ];
+
+        let start = { x: 0, y: 0 };
+        let destination = { x: 2, y: 2 };
+
+        let graph = new Graph(grid2);
+        graph.displayGraph(); // Optional: To verify the graph structure
+
+        let path = graph.A_star(start, destination);
+        console.log("Path:", path);
+
+
         app.ticker.maxFPS = maxFPS;
         app.ticker.add(() => {
             for (let i = 0; i < nstudent; i++) {
-                let student = classroom._students[i];
-                switch(i%4) {
-                    case 0:
-                        student.performAgentAction(Action.Up);
-                        break;
-                    case 1:
-                        student.performAgentAction(Action.Down);
-                        break;
-                    case 2:
-                        student.performAgentAction(Action.Left);
-                        break;
-                    case 3:
-                        student.performAgentAction(Action.Right);
-                        break;
-                }
+              //  let destination = classroom._desksTeacher[0]._coordGrid;
+
+              //  let student = classroom._students[i];
+               // student.findPath(destination);
+
+
+                // switch(i%4) {
+                //     case 0:
+                //         student.performAgentAction(Action.Up);
+                //         break;
+                //     case 1:
+                //         student.performAgentAction(Action.Down);
+                //         break;
+                //     case 2:
+                //         student.performAgentAction(Action.Left);
+                //         break;
+                //     case 3:
+                //         student.performAgentAction(Action.Right);
+                //         break;
+                // }
             }
             if (DEBUG) classroom.displayDebugGrid(); // RED = Student, GREEN = Teacher, BLUE = Empty, BLACK = Something else
         });
