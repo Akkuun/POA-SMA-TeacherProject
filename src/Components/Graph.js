@@ -66,6 +66,37 @@ class Graph {
             );
         }
     }
+    displayCells(app) {
+        for (let key in this.nodes){
+            let node = this.nodes[key];
+            let i = node.x;
+            let j = node.y;
+            let graphics = new PIXI.Graphics();
+            let coords = GridCoordsToDisplayCoords(j, i);
+            let points = [
+                new PIXI.Point(coords.x, coords.y),
+                new PIXI.Point(coords.x + cellUnit.x * RightVector.x, coords.y + cellUnit.x * RightVector.y),
+                new PIXI.Point(coords.x + cellUnit.x * RightVector.x + cellUnit.y * DownVector.x, coords.y + cellUnit.x * RightVector.y + cellUnit.y * DownVector.y),
+                new PIXI.Point(coords.x + cellUnit.y * DownVector.x, coords.y + cellUnit.y * DownVector.y)
+            ];
+            let cellDisplay = new PIXI.Polygon(points);
+
+            // Draw the border of the cell
+            graphics.lineStyle(1, 0x000000, 1);
+            graphics.beginFill(0xFFFFFF);
+            graphics.drawPolygon(cellDisplay);
+            graphics.endFill();
+
+            // Display a dot in the center of the cell
+            let dot = GridCellCenterForDisplay(j, i);
+            graphics.beginFill(0x0000FF);
+            graphics.drawCircle(dot.x, dot.y, 3);
+            graphics.endFill();
+
+            graphics.zIndex = 3;
+            app.stage.addChild(graphics);
+        }
+    }
 
     heuristic(a, b) {
         return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
