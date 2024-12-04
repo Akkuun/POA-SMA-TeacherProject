@@ -1,3 +1,8 @@
+
+import * as PIXI from 'pixi.js';
+import {cellUnit, GridCellCenterForDisplay, GridCoordsToDisplayCoords} from "./Classroom.jsx";
+import {DownVector, RightVector} from "./Global.jsx";
+
 class Node {
     constructor(x, y) {
         this.x = x;
@@ -34,10 +39,10 @@ class Graph {
         for (let key in nodes) {
             const [x, y] = key.split(',').map(Number);
             const directions = [
-                { dx: -1, dy: 0 },
-                { dx: 1, dy: 0 },
-                { dx: 0, dy: -1 },
-                { dx: 0, dy: 1 }
+                {dx: -1, dy: 0},
+                {dx: 1, dy: 0},
+                {dx: 0, dy: -1},
+                {dx: 0, dy: 1}
             ];
 
             for (let dir of directions) {
@@ -69,7 +74,6 @@ class Graph {
     A_star(start, destination) {
         const startNode = this.nodes[`${start.x},${start.y}`];
         const destinationNode = this.nodes[`${destination.x},${destination.y}`];
-
         if (!startNode || !destinationNode) {
             console.error("Start or destination node is invalid.");
             console.log("Start Node:", startNode);
@@ -78,8 +82,6 @@ class Graph {
         }
 
         let openSet = new Set([startNode]);
-        console.log("Open Set at start:", openSet);
-
         let cameFrom = new Map();
 
         let gScore = new Map();
@@ -87,19 +89,14 @@ class Graph {
 
         let fScore = new Map();
         fScore.set(startNode, this.heuristic(startNode, destinationNode));
-
         while (openSet.size > 0) {
             let current = Array.from(openSet).reduce((a, b) =>
                 (fScore.get(a) || Infinity) < (fScore.get(b) || Infinity) ? a : b
             );
-
-            console.log(`Current node: ${current.x},${current.y}`);
-
             if (current === destinationNode) {
-                console.log("Reached destination:", destinationNode);
                 let path = [];
                 while (current) {
-                    path.push({ x: current.x, y: current.y });
+                    path.push({x: current.x, y: current.y});
                     current = cameFrom.get(current);
                 }
                 return path.reverse();
@@ -108,16 +105,14 @@ class Graph {
             openSet.delete(current);
 
             for (let neighbor of current.neighbors) {
-                console.log(`Checking neighbor: ${neighbor.x},${neighbor.y}`);
-                let tentative_gScore = (gScore.get(current) || Infinity) + 1;
+                let tentative_gScore = (gScore.get(current) !== undefined ? gScore.get(current) : Infinity) + 1;
 
-                if (tentative_gScore < (gScore.get(neighbor) || Infinity)) {
+                if (tentative_gScore < (gScore.get(neighbor) !== undefined ? gScore.get(neighbor) : Infinity)) {
                     cameFrom.set(neighbor, current);
                     gScore.set(neighbor, tentative_gScore);
                     fScore.set(neighbor, gScore.get(neighbor) + this.heuristic(neighbor, destinationNode));
 
                     if (!openSet.has(neighbor)) {
-                        console.log(`Adding ${neighbor.x},${neighbor.y} to openSet`);
                         openSet.add(neighbor);
                     }
                 }
@@ -126,6 +121,39 @@ class Graph {
 
         console.error("No path found.");
         return [];
+    }
+
+    drawPath(path, app) {
+        for (let cell of path) {
+            console.log(cell);
+            let i = cell.x;
+            let j = cell.y;
+
+            let graphics = new PIXI.Graphics();
+            let coords = GridCoordsToDisplayCoords(j, i);
+            let points = [
+                new PIXI.Point(coords.x, coords.y),
+                new PIXI.Point(coords.x + cellUnit.x * RightVector.x, coords.y + cellUnit.x * RightVector.y),
+                new PIXI.Point(coords.x + cellUnit.x * RightVector.x + cellUnit.y * DownVector.x, coords.y + cellUnit.x * RightVector.y + cellUnit.y * DownVector.y),
+                new PIXI.Point(coords.x + cellUnit.y * DownVector.x, coords.y + cellUnit.y * DownVector.y)
+            ];
+            let cellDisplay = new PIXI.Polygon(points);
+
+            // Draw the border of the cell
+            graphics.lineStyle(1, 0x000000, 1);
+            graphics.beginFill(0xFFFFFF);
+            graphics.drawPolygon(cellDisplay);
+            graphics.endFill();
+
+            // Display a dot in the center of the cell
+            let dot = GridCellCenterForDisplay(j, i);
+            graphics.beginFill(0x0000FF);
+            graphics.drawCircle(dot.x, dot.y, 3);
+            graphics.endFill();
+
+            graphics.zIndex = 3;
+            app.stage.addChild(graphics);
+        }
     }
 }
 

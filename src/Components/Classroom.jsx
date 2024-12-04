@@ -8,7 +8,7 @@ import * as PIXI from 'pixi.js';
 export const classroom_nrows = 27;
 export const classroom_ncols = 41;
 
-const cellUnit = {
+export const cellUnit = {
     x: 1 / (classroom_ncols - 1),
     y: 1 / (classroom_nrows - 1)
 };

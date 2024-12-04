@@ -152,21 +152,34 @@ const MainPage = ({ sweetNumber, studentNumber, setSweetNumber, setStudentNumber
         }
 
 
-        let grid2 = [
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0]
-        ];
+        // let grid2 = [
+        //     [0, 0, 0],
+        //     [0, 0, 0],
+        //     [0, 0, 0]
+        // ];
+        //
+        // let start = { x: 0, y: 0 };
+        // let destination = { x: 2, y: 2 };
+        //
+        // let graph = new Graph(grid2);
+        // graph.displayGraph();
+        //
+        // let path = graph.A_star(start, destination);
+        // console.log("Path:", path);
+        let graph = new Graph(classroom._grid);
 
-        let start = { x: 0, y: 0 };
-        let destination = { x: 2, y: 2 };
+        let start = { x: classroom._students[0]._gridPos.x, y: classroom._students[0]._gridPos.y};
+       //let start = { x: 0, y: 0};
+        //destination bureau de la prof
+       let teacher_x =  classroom._desksTeacher[0]._coordGrid.x;
+       let teacher_y =  classroom._desksTeacher[0]._coordGrid.y;
 
-        let graph = new Graph(grid2);
-        graph.displayGraph(); // Optional: To verify the graph structure
+        let destination = { x: 10,
+            y: 30};
 
         let path = graph.A_star(start, destination);
         console.log("Path:", path);
-
+        graph.drawPath(path,app);
 
         app.ticker.maxFPS = maxFPS;
         app.ticker.add(() => {
