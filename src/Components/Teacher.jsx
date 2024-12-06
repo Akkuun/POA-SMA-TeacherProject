@@ -1,8 +1,8 @@
 import { Agent } from './Agent';
 
 export const TeacherState = {
-    Patrolling,
-    MovingToStudent
+    Patrolling : "Patrolling",
+    MovingToStudent : "MovingToStudent",
 }
 
 export class Teacher extends Agent {
