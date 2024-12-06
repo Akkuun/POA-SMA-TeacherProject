@@ -104,6 +104,7 @@ export class Classroom {
 
     setCandy(candy) {
         this._grid[candy.y][candy.x] = 42;
+        this._candy=candy;
     }
 
     agentEnter() { // Will be useful to make the agents enter the classroom in sequence and walk to their predefined position

@@ -158,12 +158,12 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
     displayClassroom(app, classroom);
 
 
-    let graph = new Graph(classroom._grid);
+    //let graph = new Graph(classroom._grid);
 
     //let start = {x: classroom._students[0]._gridPos.x, y: classroom._students[0]._gridPos.y}; // for debugging first student coordinates
-    let start = { x: 1, y: 0};
+    //let start = { x: 1, y: 0};
 //        let start = { x: 10, y: 32};
-    let destination = {x: 1, y: 23};
+    //let destination = {x: 1, y: 23};
 
 
     // let destination = {x: classroom._desksTeacher[0]._coordGrid.x, y: classroom._desksTeacher[0]._coordGrid.y};
@@ -174,15 +174,15 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
     // classroom.displayDebugGridCell(destination);
     classroom.displayDesks(app);
 
-    let path = graph.A_star(start, destination);
+    //let path = graph.A_star(start, destination);
     // console.log("Path:", path);
-    graph.drawPath(path, app);
+    //graph.drawPath(path, app);
     //graph.displayCells(app);
     app.ticker.maxFPS = maxFPS;
     app.ticker.add(() => {
         for (let i = 0; i < nstudent; i++) {
             let student = classroom._students[i];
-            console.log("Student", i, "is at", student._gridPos);
+             console.log("Student", i, "is ", student);
             student.choseAgentAction();
 
             //  let destination = classroom._desksTeacher[0]._coordGrid;
