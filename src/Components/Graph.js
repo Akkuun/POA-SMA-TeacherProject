@@ -30,7 +30,7 @@ class Graph {
         for (let i = 1; i < this.ncols; i++) {
             for (let j = 1; j < this.nrows; j++) {
                 if (this.grid[i][j] === 0 || this.grid[i][j] === 42 || this.grid[i][j] === this.start) {
-                    nodes[`${i},${j}`] = new Node(i, j);
+                    nodes[`${j},${i}`] = new Node(j, i);
                 }
             }
         }

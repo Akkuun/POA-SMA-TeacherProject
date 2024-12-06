@@ -70,9 +70,9 @@ export class Student extends Agent {
 
 
 
-            let path = graph.A_star(this._gridPos, {x:destination.y,y:destination.x});
-
-            // Fait le prochain mouvement
+            let path = graph.A_star(this._gridPos, destination);
+            graph.drawPath(path, this._app);
+            // Fait le prochainpath[1] mouvementpath[1]
             this.performAgentAction(this.getNextDirection(this._gridPos, path[1]));
 
             // Si état = MovingToCandy, et si le student est sur une case adjacente au bonbon, state devient MovingToDesk et il a réussi à prendre le bonbon
