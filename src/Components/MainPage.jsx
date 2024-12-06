@@ -162,23 +162,29 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
         }
 
         // Charger et afficher le terrain
+        //attente que app soit chargé
+        do {
+            console.log("waiting");
+
+        }while (false);
         displayClassroom(app, classroom);
 
 
         let graph = new Graph(classroom._grid);
 
-        let start = {x: classroom._students[0]._gridPos.x, y: classroom._students[0]._gridPos.y}; // for debugging first student coordinates
-       // let start = { x: 10, y: 32};
-        //let destination = {x: 5, y: 10};
+        //let start = {x: classroom._students[0]._gridPos.x, y: classroom._students[0]._gridPos.y}; // for debugging first student coordinates
+       let start = { x: 1, y: 0};
+//        let start = { x: 10, y: 32};
+       let destination = {x: 1, y: 23};
 
 
-        let destination = {x: classroom._desksTeacher[0]._coordGrid.x, y: classroom._desksTeacher[0]._coordGrid.y};
+       // let destination = {x: classroom._desksTeacher[0]._coordGrid.x, y: classroom._desksTeacher[0]._coordGrid.y};
         console.log(destination);
         // classroom.displayDebugGridCell(destination);
         // classroom.displayDebugGridCell(start);
         // classroom.displayDebugGridCell(start);
         // classroom.displayDebugGridCell(destination);
-        classroom.displayDesks(app);
+        //classroom.displayDesks(app);
 
         let path = graph.A_star(start, destination);
         console.log("Path:", path);
