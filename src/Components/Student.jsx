@@ -33,7 +33,11 @@ export class Student extends Agent {
         /*
         loi binomiale de param p=0,002 n=30  1 etu toutes les 3 secondes
          */
-        return Math.random() < 0.01;
+        return Math.random() < 0.1; // 1 agent : p = 0.1, 5 agents : p = 0.01, 20 agents : p = 0.002
+    }
+
+    oneOf(gridPosA, gridPosB){
+        return (Math.abs(gridPosA.x - gridPosB.x) + Math.abs(gridPosA.y - gridPosB.y) === 1);
     }
 
     choseAgentAction() {
@@ -73,10 +77,13 @@ export class Student extends Agent {
             let path = graph.A_star(this._gridPos, destination);
             graph.drawPath(path, this._app);
             // Fait le prochainpath[1] mouvementpath[1]
-            this.performAgentAction(this.getNextDirection(this._gridPos, path[1]));
+            let action = this.getNextDirection(this._gridPos, {x: path[1].y, y: path[1].x});
+            console.log(action);
+            this.performAgentAction(action);
 
             // Si état = MovingToCandy, et si le student est sur une case adjacente au bonbon, state devient MovingToDesk et il a réussi à prendre le bonbon
-            if((this._state === StudentState.MovingToCandy)&&(this._gridPos.x === destination.x && this._gridPos.y === destination.y)) {
+            if((this._state === StudentState.MovingToCandy) && this.oneOf(this._gridPos, destination)){
+                if (this._gridPos)
                 this._state = StudentState.MovingToDesk;
                 this._candies++;
             }

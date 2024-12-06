@@ -136,11 +136,14 @@ export class Classroom {
     }
 
     moveAgent(agent, oldPos, newPos) {
+        console.log("Moving agent from", oldPos, "to", newPos);
         if (this._grid[oldPos.y][oldPos.x] === agent && this._grid[newPos.y][newPos.x] === 0) {
             this._grid[oldPos.y][oldPos.x] = 0;
             this._grid[newPos.y][newPos.x] = agent;
+            console.log("Move successful");
             return true;
         } else {
+            console.log("Move failed");
             return false;
         }
     }
