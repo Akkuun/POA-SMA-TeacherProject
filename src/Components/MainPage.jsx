@@ -149,7 +149,7 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
     const classroom = new Classroom(app);
     classroom.setCandy({x:30,y:10});
 
-    const nstudent = 1;
+    const nstudent = 20;
     const nteacher = 1;
     
     fillGridCell(nstudent, classroom, app);

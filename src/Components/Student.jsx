@@ -33,7 +33,7 @@ export class Student extends Agent {
         /*
         loi binomiale de param p=0,002 n=30  1 etu toutes les 3 secondes
          */
-        return Math.random() < 0.1; // 1 agent : p = 0.1, 5 agents : p = 0.01, 20 agents : p = 0.002
+        return Math.random() < 0.002; // 1 agent : p = 0.1, 5 agents : p = 0.01, 20 agents : p = 0.002
     }
 
     oneOf(gridPosA, gridPosB){
@@ -41,11 +41,8 @@ export class Student extends Agent {
     }
 
     choseAgentAction() {
-        //console.log("I am choosing an action");
         let destination;
         let graph = new Graph(this._classroom._grid,this._gridPos);
-        //console.log("I create the graph");
-        //console.log(this._state);
 
         // Condition qui dit si le student veut un bonbon. Si il veut un bonbon, state devient MovingToCandy
 
@@ -53,33 +50,26 @@ export class Student extends Agent {
         if(this._state === StudentState.Idle){
             if(this.doIWannaCandy()){
                 this._state = StudentState.MovingToCandy;
-                //console.log("I want a candy");
             }
         }else{
             // Sinon
             // Si état = MovingToCandy, destination = bonbon le plus proche
             if(this._state === StudentState.MovingToCandy){
                 destination = this._classroom._candy; //destination
-                //console.log("I am going to the candy");
 
             }else if(this._state === StudentState.MovingToDesk){    // Si état = MovingToDesk, destination = son desk
                 destination = this._desk._coordGrid; //destination
-                //console.log("I am going to my desk");
             }
             // Calcule la route (pathfinding) pour aller à la destination
-            console.log(this._gridPos);
-            console.log(destination);
-            console.log(graph.nodes);
-            console.log(this._classroom._grid);
-
-
-
-            let path = graph.A_star(this._gridPos, destination);
-            graph.drawPath(path, this._app);
-            // Fait le prochainpath[1] mouvementpath[1]
-            let action = this.getNextDirection(this._gridPos, {x: path[1].y, y: path[1].x});
-            console.log(action);
-            this.performAgentAction(action);
+            try {
+                let path = graph.A_star(this._gridPos, destination);
+                graph.drawPath(path, this._app);
+                // Fait le prochainpath[1] mouvementpath[1]
+                let action = this.getNextDirection(this._gridPos, {x: path[1].y, y: path[1].x});
+                this.performAgentAction(action);
+            } catch (e) {
+                console.log(e); // if the path is not found (no path to the destination, because blocked by another agent)
+            }
 
             // Si état = MovingToCandy, et si le student est sur une case adjacente au bonbon, state devient MovingToDesk et il a réussi à prendre le bonbon
             if((this._state === StudentState.MovingToCandy) && this.oneOf(this._gridPos, destination)){
