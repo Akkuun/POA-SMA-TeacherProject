@@ -1,4 +1,3 @@
-
 import * as PIXI from 'pixi.js';
 import {cellUnit, GridCellCenterForDisplay, GridCoordsToDisplayCoords} from "./Classroom.jsx";
 import {DownVector, RightVector} from "./Global.jsx";
@@ -153,7 +152,7 @@ class Graph {
         console.error("No path found.");
         return [];
     }
-
+    //draw the start and destination cells in a different color
     drawPath(path, app) {
         for (let cell of path) {
             console.log(cell);
@@ -162,6 +161,7 @@ class Graph {
 
             let graphics = new PIXI.Graphics();
             let coords = GridCoordsToDisplayCoords(j, i);
+
             let points = [
                 new PIXI.Point(coords.x, coords.y),
                 new PIXI.Point(coords.x + cellUnit.x * RightVector.x, coords.y + cellUnit.x * RightVector.y),
@@ -170,14 +170,28 @@ class Graph {
             ];
             let cellDisplay = new PIXI.Polygon(points);
 
-            // Draw the border of the cell
-            graphics.lineStyle(1, 0x000000, 1);
-            graphics.beginFill(0xFFFFFF);
+            if(cell === path[0] || cell === path[path.length-1]){
+                graphics.lineStyle(1, 0x0FF000, 1);
+            }else{
+
+                // Draw the border of the cell
+                graphics.lineStyle(1, 0x000000, 1);
+
+            }
+            if(cell === path[0] || cell === path[path.length-1]){
+                graphics.beginFill(0xF0FF00);
+            }else{
+                graphics.beginFill(0xFFFFFF);
+
+            }
             graphics.drawPolygon(cellDisplay);
             graphics.endFill();
 
             // Display a dot in the center of the cell
             let dot = GridCellCenterForDisplay(j, i);
+            if(cell === path[0] || cell === path[path.length-1]){
+                graphics.beginFill(0xF0FF00);
+            }
             graphics.beginFill(0x0000FF);
             graphics.drawCircle(dot.x, dot.y, 3);
             graphics.endFill();
