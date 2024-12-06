@@ -1,4 +1,4 @@
-import {TopLeft, DownVector, RightVector} from "./Global.jsx";
+import {DownVector, RightVector, TopLeft} from "./Global.jsx";
 import {Student} from "./Student.jsx";
 import {Teacher} from "./Teacher.jsx";
 import {Desk} from "./Desk.jsx";
@@ -143,6 +143,8 @@ export class Classroom {
             return false;
         }
     }
+
+
 
     initializeGrid() {
         let grid = [];
