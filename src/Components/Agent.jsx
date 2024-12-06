@@ -45,10 +45,11 @@ export class Agent {
     }
 
     getNextDirection(current, next){
+        console.log("Comparing", current, next);
         if(next.x > current.x){
             return Action.Right;
         }else if(next.x < current.x){
-            return Action.Down;
+            return Action.Left;
         }else if(next.y > current.y){
             return Action.Down;
         }else if(next.y < current.y){
