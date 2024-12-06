@@ -29,7 +29,7 @@ class Graph {
         // Create nodes for all valid grid positions
         for (let i = 0; i < this.ncols; i++) {
             for (let j = 0; j < this.nrows; j++) {
-                if (this.grid[i][j] !== 2 && this.grid[i][j] !== "student") {
+                if (this.grid[i][j] !== 2 && this.grid[i][j] !== "student" && this.grid[i][j] !==1) {
                     nodes[`${i},${j}`] = new Node(i, j);
                 }
             }
