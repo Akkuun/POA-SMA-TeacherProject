@@ -112,7 +112,7 @@ function displayClassroom(app, classroom) {
             deskSprite.zIndex = 10;
             deskSprite.width = desk.width;
             deskSprite.height = desk.height;
-            deskSprite.anchor.set(0, 1);
+            deskSprite.anchor.set(0.5, 0.5);
             app.stage.addChild(deskSprite);
             desk.setSprite(deskSprite);
             desk.display();
@@ -167,15 +167,18 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
 
         let graph = new Graph(classroom._grid);
 
-       // let start = {x: classroom._students[0]._gridPos.x, y: classroom._students[0]._gridPos.y}; // for debugging first student coordinates
-        let start = { x: 10, y: 32};
-        let destination = {x: 5, y: 10};
+        let start = {x: classroom._students[0]._gridPos.x, y: classroom._students[0]._gridPos.y}; // for debugging first student coordinates
+       // let start = { x: 10, y: 32};
+        //let destination = {x: 5, y: 10};
 
 
-        //let destination = {x: classroom._desksTeacher[0]._coordGrid.x, y: classroom._desksTeacher[0]._coordGrid.y};
+        let destination = {x: classroom._desksTeacher[0]._coordGrid.x, y: classroom._desksTeacher[0]._coordGrid.y};
         console.log(destination);
-        classroom.displayDebugGridCell(destination);
-        classroom.displayDebugGridCell(start);
+        // classroom.displayDebugGridCell(destination);
+        // classroom.displayDebugGridCell(start);
+        // classroom.displayDebugGridCell(start);
+        // classroom.displayDebugGridCell(destination);
+        classroom.displayDesks(app);
 
         let path = graph.A_star(start, destination);
         console.log("Path:", path);

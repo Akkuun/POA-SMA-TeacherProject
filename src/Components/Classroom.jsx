@@ -253,6 +253,28 @@ export class Classroom {
 
         return node.neighbors;
     }
+    //draw the rectangle debug display of the classroom (desk)
+    displayDesks(app) {
+        for(let desk of this._desksTeacher) {
+            let graphics = new PIXI.Graphics();
+
+            let coords = GridCoordsToDisplayCoords(desk._coordGrid.x, desk._coordGrid.y);
+            let points = [
+                new PIXI.Point(coords.x, coords.y),
+                new PIXI.Point(coords.x + cellUnit.x * RightVector.x, coords.y + cellUnit.x * RightVector.y),
+                new PIXI.Point(coords.x + cellUnit.x * RightVector.x + cellUnit.y * DownVector.x, coords.y + cellUnit.x * RightVector.y + cellUnit.y * DownVector.y),
+                new PIXI.Point(coords.x + cellUnit.y * DownVector.x, coords.y + cellUnit.y * DownVector.y)
+            ];
+            let cellDisplay = new PIXI.Polygon(points);
+            // draw the border of the cell
+            graphics.lineStyle(1, 0x000000, 1);
+            graphics.beginFill(0xFFFFFF);
+            graphics.drawPolygon(cellDisplay);
+            graphics.endFill();
+            graphics.zIndex = 2;
+            app.stage.addChild(graphics);
+        }
+    }
 
 }
 
