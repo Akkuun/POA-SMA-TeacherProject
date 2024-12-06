@@ -1,0 +1,53 @@
+Grid => 0 la case est vide
+2 => la case est occupé par un professeur
+student => la case est occupé par un étudiant
+
+grid est composé de 26 cases avec dans chaque case un tableau de 41 cases
+largeur = 26 longueur = 41, la grille donne chaque cases de la salle de classe avec une coordonnée x et y
+
+Pour faire A*, on a besoin de transformer la grille en graph mais
+on exclue les cases occupées par les professeurs et les étudiants
+
+
+
+visualier graph -> https://codebeautify.org/visualize-json-data-graph
+
+
+
+//DL le JSON
+
+   // const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
+        //     JSON.stringify(graph.graph)
+        // )}`;
+        // const link = document.createElement("a");
+        // link.href = jsonString;
+        // link.download = "data.json";
+        //
+        // link.click();
+
+
+   // console.log(graph);
+
+        //this._classroom.displayDebugGridCell(graph[0]);
+        // for(let i=0; i<classroom_ncols; i++){
+        //     for(let j=0; j<classroom_nrows; j++){
+        //         let grid = {x: i, y: j};
+        //         this._classroom.displayDebugGridCell(grid);
+        //     }
+        // }
+
+console.log(`Current: ${current}, Neighbors:`, graph[current]); donne :
+[
+    {
+        "x": 25,
+        "y": 3
+    },
+    {
+        "x": 26,
+        "y": 2
+    },
+    {
+        "x": 26,
+        "y": 4
+    }
+]
