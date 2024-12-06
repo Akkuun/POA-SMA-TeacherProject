@@ -7,6 +7,7 @@ export const TeacherState = {
 
 export class Teacher extends Agent {
     _state;
+    _desk;
     _patrolPoints = [];
     _patrolStatus = 0;
 
@@ -43,6 +44,9 @@ export class Teacher extends Agent {
         return this._patrolPoints[this._patrolStatus];
     }
 
+    setDesk(desk) {
+        this._desk = desk;
+    }
 }
 
 export default Teacher;

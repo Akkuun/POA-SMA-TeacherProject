@@ -7,15 +7,18 @@ import {WindowHeight, WindowWidth} from "./Global.jsx";
 export class Desk{
     _sprite;
     _coordGrid;
+    _owner;
 
     constructor(x, y) {
         this._width = 30 / 545 * WindowWidth * 0.66;
         this._height = 30 / 405 * WindowHeight * 50/68;
         this._coordGrid = {x: x, y: y};
-
+        this._owner = null;
     }
 
-
+    assignOwner(owner) {
+        this._owner = owner;
+    }
 
     get width() {
         return this._width;

@@ -59,10 +59,10 @@ class Graph {
 
     displayGraph() {
         for (let key in this.nodes) {
-            console.log(
+            /*console.log(
                 `Node ${key} -> Neighbors:`,
                 this.nodes[key].neighbors.map(neighbor => `${neighbor.x},${neighbor.y}`)
-            );
+            );*/
         }
     }
     displayCells(app) {
@@ -155,7 +155,7 @@ class Graph {
     //draw the start and destination cells in a different color
     drawPath(path, app) {
         for (let cell of path) {
-            console.log(cell);
+            //console.log(cell);
             let i = cell.x;
             let j = cell.y;
 
