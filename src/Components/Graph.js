@@ -26,8 +26,8 @@ class Graph {
         const nodes = {};
 
         // Create nodes for all valid grid positions
-        for (let i = 0; i < this.ncols; i++) {
-            for (let j = 0; j < this.nrows; j++) {
+        for (let i = 1; i < this.ncols; i++) {
+            for (let j = 1; j < this.nrows; j++) {
                 if (this.grid[i][j] !== 2 && this.grid[i][j] !== "student" && this.grid[i][j] !==1) {
                     nodes[`${i},${j}`] = new Node(i, j);
                 }
@@ -176,7 +176,6 @@ class Graph {
 
                 // Draw the border of the cell
                 graphics.lineStyle(1, 0x000000, 1);
-
             }
             if(cell === path[0] || cell === path[path.length-1]){
                 graphics.beginFill(0xF0FF00);
