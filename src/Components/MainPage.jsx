@@ -181,6 +181,10 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
     app.ticker.maxFPS = maxFPS;
     app.ticker.add(() => {
         for (let i = 0; i < nstudent; i++) {
+            let student = classroom._students[i];
+            console.log("Student", i, "is at", student._gridPos);
+            student.choseAgentAction();
+
             //  let destination = classroom._desksTeacher[0]._coordGrid;
 
             //  let student = classroom._students[i];
