@@ -1,4 +1,5 @@
 import { Agent } from './Agent';
+import { WindowWidth, WindowHeight } from './Global';
 
 
 export const StudentState = {
@@ -14,6 +15,8 @@ export class Student extends Agent {
 
     constructor(p_app, p_classroom) {
         super(p_app, p_classroom);
+        this._width = 26 / 545 * WindowWidth * 0.46;
+        this._height = 37 / 405 * WindowHeight * 50/68;
         this._state = StudentState.Idle;
         this._candies = 0;
     }
@@ -37,6 +40,10 @@ export class Student extends Agent {
         // Si état = MovingToCandy, et si le student est sur une case adjacente au bonbon, state devient MovingToDesk et il a réussi à prendre le bonbon
         // Si état = MovingToDesk, et si le student est sur son desk, state devient idle
 
+    }
+
+    setDesk(desk) {
+        this._desk = desk;
     }
 
 }
