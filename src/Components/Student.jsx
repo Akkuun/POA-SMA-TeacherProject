@@ -39,7 +39,7 @@ export class Student extends Agent {
     choseAgentAction() {
         //console.log("I am choosing an action");
         let destination;
-        let graph = new Graph(this._classroom._grid);
+        let graph = new Graph(this._classroom._grid,this);
         //console.log("I create the graph");
         //console.log(this._state);
 

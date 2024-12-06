@@ -15,11 +15,12 @@ class Node {
 }
 
 class Graph {
-    constructor(grid) {
+    constructor(grid,start) {
         this.grid = grid;
         this.ncols = grid.length;
         this.nrows = grid[0].length;
         this.nodes = this.createGraphFromGrid();
+        this.start=start;
     }
 
     createGraphFromGrid() {
@@ -28,7 +29,7 @@ class Graph {
         // Create nodes for all valid grid positions
         for (let i = 1; i < this.ncols; i++) {
             for (let j = 1; j < this.nrows; j++) {
-                if (this.grid[i][j] === 0) {
+                if (this.grid[i][j] === 0 || this.grid[i][j] === 42 || this.grid[i][j] === this.start) {
                     nodes[`${i},${j}`] = new Node(i, j);
                 }
             }
@@ -102,14 +103,21 @@ class Graph {
     }
 
     A_star(start, destination) {
-        const startNode = this.nodes[`${start.x},${start.y}`];
+        let startNode = this.nodes[`${start.x},${start.y}`];
+        console.log(start);
+        if(!startNode){
+            this.nodes[`${start.x},${start.y}`] = new Node(start.x, start.y);
+            startNode=this.nodes[`${start.x},${start.y}`];
+        }
         const destinationNode = this.nodes[`${destination.x},${destination.y}`];
+        console.log(destination);
         if (!startNode || !destinationNode) {
             console.error("Start or destination node is invalid.");
             console.log("Start Node:", startNode);
             console.log("Destination Node:", destinationNode);
             return [];
         }
+
 
         let openSet = new Set([startNode]);
         let cameFrom = new Map();
