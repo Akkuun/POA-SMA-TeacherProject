@@ -46,13 +46,13 @@ export class Agent {
 
     getNextDirection(current, next){
         if(next.x > current.x){
-            return Action.Down;
-        }else if(next.x < current.x){
-            return Action.Up;
-        }else if(next.y > current.y){
             return Action.Right;
+        }else if(next.x < current.x){
+            return Action.Down;
+        }else if(next.y > current.y){
+            return Action.Down;
         }else if(next.y < current.y){
-            return Action.Left;
+            return Action.Up;
         }
     }
 

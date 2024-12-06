@@ -33,13 +33,13 @@ export class Student extends Agent {
         /*
         loi binomiale de param p=0,002 n=30  1 etu toutes les 3 secondes
          */
-        return Math.random() < 0.002;
+        return Math.random() < 0.01;
     }
 
     choseAgentAction() {
         //console.log("I am choosing an action");
         let destination;
-        let graph = new Graph(this._classroom._grid,this);
+        let graph = new Graph(this._classroom._grid,this._gridPos);
         //console.log("I create the graph");
         //console.log(this._state);
 

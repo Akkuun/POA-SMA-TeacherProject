@@ -19,8 +19,8 @@ class Graph {
         this.grid = grid;
         this.ncols = grid.length;
         this.nrows = grid[0].length;
-        this.nodes = this.createGraphFromGrid();
         this.start=start;
+        this.nodes = this.createGraphFromGrid();
     }
 
     createGraphFromGrid() {
@@ -29,7 +29,7 @@ class Graph {
         // Create nodes for all valid grid positions
         for (let i = 1; i < this.ncols; i++) {
             for (let j = 1; j < this.nrows; j++) {
-                if (this.grid[i][j] === 0 || this.grid[i][j] === 42 || this.grid[i][j] === this.start) {
+                if (this.grid[i][j] === 0 || this.grid[i][j] === 42 || (i == this.start.y && j == this.start.x)) {
                     nodes[`${j},${i}`] = new Node(j, i);
                 }
             }
@@ -102,13 +102,17 @@ class Graph {
         return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
     }
 
+    reverseXYOnPath(path){
+        let newPath = [];
+        for (let cell of path){
+            newPath.push({x: cell.y, y: cell.x});
+        }
+        return newPath;
+    }
+
     A_star(start, destination) {
         let startNode = this.nodes[`${start.x},${start.y}`];
         console.log(start);
-        if(!startNode){
-            this.nodes[`${start.x},${start.y}`] = new Node(start.x, start.y);
-            startNode=this.nodes[`${start.x},${start.y}`];
-        }
         const destinationNode = this.nodes[`${destination.x},${destination.y}`];
         console.log(destination);
         if (!startNode || !destinationNode) {
@@ -137,6 +141,7 @@ class Graph {
                     path.push({x: current.x, y: current.y});
                     current = cameFrom.get(current);
                 }
+                path = this.reverseXYOnPath(path); // ON INVERSE TOUT AHAHAHAHAH
                 return path.reverse();
             }
 
