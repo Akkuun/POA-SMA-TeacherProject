@@ -6,6 +6,7 @@ export const StudentState = {
     Idle: "Idle",
     MovingToCandy: "MovingToCandy",
     MovingToDesk: "MovingToDesk",
+    MovingToDeskTouched: "MovingToDeskTouched"
 }
 
 export class Student extends Agent {
@@ -36,9 +37,6 @@ export class Student extends Agent {
         return Math.random() < 0.002; // 1 agent : p = 0.1, 5 agents : p = 0.01, 20 agents : p = 0.002
     }
 
-    oneOf(gridPosA, gridPosB) {
-        return (Math.abs(gridPosA.x - gridPosB.x) + Math.abs(gridPosA.y - gridPosB.y) === 1);
-    }
 
     choseAgentAction() {
         let destination;
@@ -57,7 +55,7 @@ export class Student extends Agent {
             if (this._state === StudentState.MovingToCandy) {
                 destination = this._classroom._candy; //destination
 
-            } else if (this._state === StudentState.MovingToDesk) {    // Si état = MovingToDesk, destination = son desk
+            } else if (this._state === StudentState.MovingToDesk || this._state === StudentState.MovingToDeskTouched) {    // Si état = MovingToDesk, destination = son desk
                 destination = this._desk._coordGrid; //destination
             }
             // Calcule la route (pathfinding) pour aller à la destination
@@ -77,7 +75,7 @@ export class Student extends Agent {
                     this._state = StudentState.MovingToDesk;
                 this._candies++;
             }
-            if ((this._state === StudentState.MovingToDesk) && (this._gridPos.x === destination.x && this._gridPos.y === destination.y)) { // Si état = MovingToDesk, et si le student est sur son desk, state devient idle
+            if ((this._state === StudentState.MovingToDesk || this._state === StudentState.MovingToDeskTouched) && (this._gridPos.x === destination.x && this._gridPos.y === destination.y)) { // Si état = MovingToDesk, et si le student est sur son desk, state devient idle
                 this._state = StudentState.Idle;
             }
         }

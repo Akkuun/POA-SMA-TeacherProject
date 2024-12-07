@@ -1,6 +1,7 @@
 import {Agent} from './Agent';
 import {WindowHeight, WindowWidth} from "./Global.jsx";
 import Graph from "./Graph.js";
+import {StudentState} from "./Student.jsx";
 
 export const TeacherState = {
     Patrolling: "Patrolling",
@@ -41,6 +42,7 @@ export class Teacher extends Agent {
                 }
             }
         }
+        if (closestStudent === null) this._state = TeacherState.Patrolling; // Si il n'y a pas de student en mouvement, state devient Patrolling
         // Si état = Patrolling, destination = prochain point de patrouille
         if (this._state === TeacherState.Patrolling) {
             destination = this.getPatrolPoint();
@@ -51,14 +53,21 @@ export class Teacher extends Agent {
             console.log("Closest student position", destination);
         }
         // Calcule la route (pathfinding) pour aller à la destination
-        let graph = new Graph(this._classroom._grid, this._gridPos);
-
+        let graph = new Graph(this._classroom._grid, this._gridPos, destination);
+        console.log(graph);
         let path = graph.A_star(start, destination);
         if (path.length > 0) {
             // Fait le prochain mouvement
             let direction = this.getNextDirection(start, path[1]);
             console.log("Direction : ", direction);
             this.performAgentAction(direction);
+        }
+
+        if (this._state === TeacherState.MovingToStudent && this.oneOf(this._gridPos, destination)) {
+            closestStudent.changeState(StudentState.MovingToDeskTouched);
+            this._state = TeacherState.Patrolling;
+
+
         }
 
 

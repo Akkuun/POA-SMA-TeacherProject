@@ -81,6 +81,10 @@ export class Agent {
 
     }
 
+    // function that return true if the agent is on a cell adjacent to the destination
+    oneOf(gridPosA, gridPosB) {
+        return (Math.abs(gridPosA.x - gridPosB.x) + Math.abs(gridPosA.y - gridPosB.y) === 1);
+    }
 
     move(action) {
         let oldPos = this._gridPos;
