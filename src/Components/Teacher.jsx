@@ -64,7 +64,10 @@ export class Teacher extends Agent {
         }
 
         if (this._state === TeacherState.MovingToStudent && this.oneOf(this._gridPos, destination)) {
-            if (closestStudent._state === StudentState.MovingToDesk) closestStudent._candies--; // Teacher récupère le bonbon que le student a pris
+            if (closestStudent._state === StudentState.MovingToDesk){
+                closestStudent._candies--;
+                closestStudent.changeSprite('../../src/assets/student.png');
+            }// Teacher récupère le bonbon que le student a pris
             closestStudent.changeState(StudentState.MovingToDeskTouched);
             this._state = TeacherState.Patrolling;
 

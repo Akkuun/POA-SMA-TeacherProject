@@ -28,7 +28,7 @@ const startColTeacher = 33;
 const endColTeacher = classroom_ncols - 1;
 
 
-const nteacher = 1;
+const nteacher = 2;
 
 let nCandiesTaken = 0;
 
