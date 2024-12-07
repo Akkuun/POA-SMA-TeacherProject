@@ -1,8 +1,9 @@
-import { Agent } from './Agent';
+import {Agent} from './Agent';
+import {WindowHeight, WindowWidth} from "./Global.jsx";
 
 export const TeacherState = {
-    Patrolling : "Patrolling",
-    MovingToStudent : "MovingToStudent",
+    Patrolling: "Patrolling",
+    MovingToStudent: "MovingToStudent",
 }
 
 export class Teacher extends Agent {
@@ -14,14 +15,15 @@ export class Teacher extends Agent {
     constructor(p_app, p_classroom) {
         super(p_app, p_classroom);
         this._state = TeacherState.Patrolling;
+        this._width = 25 / 545 * WindowWidth * 0.6;
+        this._height = 24 / 405 * WindowHeight * 50 / 40;
     }
-    
+
     performAgentAction(action) {
         this.move(action);
     }
 
     choseAgentAction() {
-        this._classroom;
 
         // Si il existe un student qui n'est pas à son bureau, state devient MovingToStudent
 
