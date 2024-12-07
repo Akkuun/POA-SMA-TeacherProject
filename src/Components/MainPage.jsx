@@ -1,10 +1,12 @@
 import * as PIXI from 'pixi.js';
 import OptionsWindow from './OptionWindow.jsx';
-import Classroom, {classroom_ncols, GridCoordsToDisplayCoords} from './Classroom';
+import Classroom, {classroom_ncols, GridCellCenterForDisplay} from './Classroom';
 import Student from './Student';
 import {Teacher} from './Teacher';
 import {DEBUG,vecDot,vecLength,DownVector, WindowHeight, WindowWidth} from './Global';
 import {Desk} from "./Desk.jsx";
+import BadApple from '../../src/assets/frames.json';
+import badappleaudio from '../../src/assets/bad-apple.mp3';
 
 const maxFPS = 10; // Changes the game's speed
 const startRow = 4;
@@ -33,6 +35,80 @@ const nteacher = 1;
 
 let nCandiesTaken = 0;
 
+function displayFrame(frame, pixels) {
+    for (let i = 0; i < 27; i++) {
+        for (let j = 0; j < 41; j++) {
+            try {
+                if (frame[i][j] === 1) {
+                    let coords = GridCellCenterForDisplay(j, i);
+                    pixels[i*41+j].x = coords.x;
+                    pixels[i*41+j].y = coords.y;
+                } else {
+                    pixels[i*41+j].x = -1;
+                    pixels[i*41+j].y = -1;
+                }
+            } catch (e) {
+            }
+        }
+    }
+}
+let badAppleAudioPlayed = false;
+function playBadApple(oldapp) {
+    let pixels = [];
+    // clear the oldapp
+    oldapp.ticker.stop();
+    oldapp.destroy(true, {children: true});
+    const app = new PIXI.Application({
+        width: window.innerWidth,  // Largeur de la fenêtre
+        height: window.innerHeight, // Hauteur de la fenêtre
+        backgroundColor: 0x1099bb,
+        sortableChildren: true,
+    });
+    app.stage.sortableChildren = true;
+
+    let root = document.getElementById("root");
+    root.appendChild(app.view);
+
+    app.ticker = new PIXI.Ticker();
+    PIXI.Assets.load('../../src/assets/map.png').then((texture) => {
+        const terrainSprite = new PIXI.Sprite(texture);
+        terrainSprite.width = window.innerWidth;  // Redimensionner pour prendre toute la largeur
+        terrainSprite.height = window.innerHeight; // Redimensionner pour prendre toute la hauteur
+        terrainSprite.x = (window.innerWidth - terrainSprite.width); // Centrer horizontalement
+        terrainSprite.y = (window.innerHeight - terrainSprite.height); // Centrer verticalement
+        terrainSprite.zIndex = -1;
+        app.stage.addChild(terrainSprite);
+    });
+    for (let i = 0; i < 27*41; i++) {
+        PIXI.Assets.load('../../src/assets/student.png').then((texture) => {
+            const studentSprite = new PIXI.Sprite(texture);
+            studentSprite.zIndex = 11;
+            studentSprite.width = 26 / 545 * WindowWidth * 0.46;
+            studentSprite.height = 37 / 405 * WindowHeight * 50 / 68;
+            studentSprite.anchor.set(0.5, 1); // Set the anchor point to the center of the sprite to (1, 0.5) for each Agent's sprite to center it on the middle of the cell
+            app.stage.addChild(studentSprite);
+            studentSprite.x = -1;
+            studentSprite.y = -1;
+            pixels.push(studentSprite);
+        });
+    }
+    app.ticker.maxFPS = 30;
+    let frame = 0;
+    let audio = new Audio(badappleaudio);
+    if (!badAppleAudioPlayed) {
+        audio.play();
+        badAppleAudioPlayed = true;
+    }
+    app.ticker.add(() => {
+        displayFrame(BadApple[frame], pixels);
+        frame++;
+        if (frame === 6574) {
+            // reload the window
+            window.location.reload();
+        }
+    });
+    app.ticker.start();
+}
 
 function updateCandiesTakenText(candiesTakenText) {
     if (candiesTakenText.style.fontFamily !== 'Chalkboard') {
@@ -187,8 +263,6 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
     const classroom = new Classroom(app);
     classroom.setCandy({x: 30, y: 10});
 
-
-
     fillGridCell(nstudent, classroom, app);
     fillDeskInClassroom(nteacher, classroom, app);
 
@@ -232,8 +306,20 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
         if (DEBUG) classroom.displayDebugGrid(); // RED = Student, GREEN = Teacher, BLUE = Empty, BLACK = Something else
     });
 
+    const handleKeyDown = (event) => {
+        if (event.ctrlKey && event.altKey && event.key === 'b') {
+            console.log('Playing Bad Apple');
+            playBadApple(app);
+        }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+
     // Nettoyer l'application PIXI lors du démontage du composant
     return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+        root.removeChild(app.view);
         app.destroy(true, {children: true});
     };
 
