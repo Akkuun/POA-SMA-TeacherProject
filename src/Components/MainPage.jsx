@@ -35,6 +35,13 @@ let nCandiesTaken = 0;
 
 
 function updateCandiesTakenText(candiesTakenText) {
+    if (candiesTakenText.style.fontFamily !== 'Chalkboard') {
+        try {
+            candiesTakenText.style.fontFamily = 'Chalkboard';
+        } catch (e) {
+            console.log(e);
+        }
+    }
     candiesTakenText.text = 'Candies taken: ' + nCandiesTaken;
 }
 
@@ -187,10 +194,21 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
 
     displayClassroom(app, classroom);
 
+    PIXI.Assets.addBundle('fonts', [
+        {alias: 'Chalkboard', src: '../../src/assets/chalkboard.ttf'}
+    ]);
+    PIXI.Assets.loadBundle('fonts');
+
     let candiesTakenText = new PIXI.Text('Candies taken: ' + nCandiesTaken, {fontFamily: 'Arial', fontSize: 24, fill: 0xFFFFFF});
     candiesTakenText.x = WindowWidth * 0.75;
     candiesTakenText.y = WindowHeight * 0.3;
     candiesTakenText.zIndex = 20;
+    candiesTakenText.style.fontSize = 24 * vecLength(DownVector) / 405;
+    try {
+        candiesTakenText.style.fontFamily = 'Chalkboard';
+    } catch (e) {
+        console.log(e);
+    }
     candiesTakenText.rotation = Math.acos(vecDot({x: 1, y: 0}, DownVector) / (vecLength({x: 1, y: 0}) * vecLength(DownVector)));
     app.stage.addChild(candiesTakenText);
 
