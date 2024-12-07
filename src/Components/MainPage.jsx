@@ -3,7 +3,7 @@ import OptionsWindow from './OptionWindow.jsx';
 import Classroom, {classroom_ncols, GridCoordsToDisplayCoords} from './Classroom';
 import Student from './Student';
 import {Teacher} from './Teacher';
-import {DEBUG} from './Global';
+import {DEBUG,vecDot,vecLength,DownVector, WindowHeight, WindowWidth} from './Global';
 import {Desk} from "./Desk.jsx";
 
 const maxFPS = 10; // Changes the game's speed
@@ -27,6 +27,23 @@ const endRowTeacher = 25;
 const startColTeacher = 33;
 const endColTeacher = classroom_ncols - 1;
 
+
+const nstudent = 20;
+const nteacher = 1;
+
+let nCandiesTaken = 0;
+
+
+function updateCandiesTakenText(candiesTakenText) {
+    if (candiesTakenText.style.fontFamily !== 'Chalkboard') {
+        try {
+            candiesTakenText.style.fontFamily = 'Chalkboard';
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    candiesTakenText.text = 'Candies taken: ' + nCandiesTaken;
+}
 
 function fillGridCell(nstudent, classroom, app) {
     while (deskCount < nstudent && (currentX <= endCol || currentY <= endRow)) { // while there are still desks to place and we haven't reached the end of the classroom
@@ -170,28 +187,48 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
     const classroom = new Classroom(app);
     classroom.setCandy({x: 30, y: 10});
 
-    const nstudent = 20;
-    const nteacher = 1;
+
 
     fillGridCell(nstudent, classroom, app);
     fillDeskInClassroom(nteacher, classroom, app);
 
     displayClassroom(app, classroom);
 
+    PIXI.Assets.addBundle('fonts', [
+        {alias: 'Chalkboard', src: '../../src/assets/chalkboard.ttf'}
+    ]);
+    PIXI.Assets.loadBundle('fonts');
+
+    let candiesTakenText = new PIXI.Text('Candies taken: ' + nCandiesTaken, {fontFamily: 'Arial', fontSize: 24, fill: 0xFFFFFF});
+    candiesTakenText.x = WindowWidth * 0.75;
+    candiesTakenText.y = WindowHeight * 0.3;
+    candiesTakenText.zIndex = 20;
+    candiesTakenText.style.fontSize = 24 * vecLength(DownVector) / 405;
+    try {
+        candiesTakenText.style.fontFamily = 'Chalkboard';
+    } catch (e) {
+        console.log(e);
+    }
+    candiesTakenText.rotation = Math.acos(vecDot({x: 1, y: 0}, DownVector) / (vecLength({x: 1, y: 0}) * vecLength(DownVector)));
+    app.stage.addChild(candiesTakenText);
+
     classroom.displayDesks(app);
     app.ticker.maxFPS = maxFPS;
 
     console.log("Classroom : ", classroom._grid);
     app.ticker.add(() => {
+        nCandiesTaken = 0;
         for (let i = 0; i < nstudent; i++) {
             let student = classroom._students[i];
             student.choseAgentAction();
+            nCandiesTaken += student._candies;
         }
         for (let i = 0; i < nteacher; i++) {
             let teacher = classroom._teachers[i];
             teacher.choseAgentAction();
             teacher.displayDebugPatrouille();
         }
+        updateCandiesTakenText(candiesTakenText);
         if (DEBUG) classroom.displayDebugGrid(); // RED = Student, GREEN = Teacher, BLUE = Empty, BLACK = Something else
     });
 

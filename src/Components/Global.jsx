@@ -19,6 +19,9 @@ export const DownRightVector = { // Diagonal vector of the classroom
 export const vecLength = (vec) => { // Compute the length of a vector
     return Math.sqrt(vec.x * vec.x + vec.y * vec.y);
 };
+export const vecDot = (vec1, vec2) => { // Compute the dot product of two vectors
+    return vec1.x * vec2.x + vec1.y * vec2.y;
+}
 export const CoordInterval = { // Interval of the classroom's coordinates adapted to the screen
     min:{x:0,y:0},
     max:{x:vecLength(RightVector),y:vecLength(DownVector)}
