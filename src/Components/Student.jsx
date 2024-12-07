@@ -1,6 +1,7 @@
 import {Agent} from './Agent';
 import {WindowHeight, WindowWidth} from './Global';
 import Graph from "./Graph.js";
+import * as PIXI from "pixi.js";
 
 export const StudentState = {
     Idle: "Idle",
@@ -13,6 +14,7 @@ export class Student extends Agent {
     _state;
     _desk;
     _candies;
+    _sprite;
 
     constructor(p_app, p_classroom) {
         super(p_app, p_classroom);
@@ -71,12 +73,13 @@ export class Student extends Agent {
 
             // Si état = MovingToCandy, et si le student est sur une case adjacente au bonbon, state devient MovingToDesk et il a réussi à prendre le bonbon
             if ((this._state === StudentState.MovingToCandy) && this.oneOf(this._gridPos, destination)) {
-                if (this._gridPos)
-                    this._state = StudentState.MovingToDesk;
+                this._state = StudentState.MovingToDesk;
                 this._candies++;
+                this.changeSprite('../../src/assets/student_candy.png'); //changer le sprite
             }
             if ((this._state === StudentState.MovingToDesk || this._state === StudentState.MovingToDeskTouched) && (this._gridPos.x === destination.x && this._gridPos.y === destination.y)) { // Si état = MovingToDesk, et si le student est sur son desk, state devient idle
                 this._state = StudentState.Idle;
+                this.changeSprite('../../src/assets/student.png'); //changer le sprite
             }
         }
 
@@ -84,6 +87,12 @@ export class Student extends Agent {
 
     setDesk(desk) {
         this._desk = desk;
+    }
+
+    changeSprite(newTexture) {
+        PIXI.Assets.load(newTexture).then((texture) => {
+            this._sprite.texture = texture;
+        });
     }
 
 }
