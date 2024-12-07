@@ -1,6 +1,5 @@
 import {DownVector, RightVector, TopLeft} from "./Global.jsx";
 import {Student} from "./Student.jsx";
-import {Teacher} from "./Teacher.jsx";
 import {Desk} from "./Desk.jsx";
 
 import * as PIXI from 'pixi.js';
@@ -81,12 +80,12 @@ export class Classroom {
 
 
     addDeskStudent(desk) {
-        this._grid[desk._coordGrid.y][desk._coordGrid.x+1] = desk;
+        this._grid[desk._coordGrid.y][desk._coordGrid.x + 1] = desk;
         this._desksStudent.push(desk);
     }
 
     addDeskTeacher(desk) {
-        this._grid[desk._coordGrid.y-1][desk._coordGrid.x] = desk;
+        this._grid[desk._coordGrid.y - 1][desk._coordGrid.x] = desk;
         this._grid[desk._coordGrid.y][desk._coordGrid.x] = desk;
         this._desksTeacher.push(desk);
     }
@@ -104,7 +103,7 @@ export class Classroom {
 
     setCandy(candy) {
         this._grid[candy.y][candy.x] = 42;
-        this._candy=candy;
+        this._candy = candy;
     }
 
     agentEnter() { // Will be useful to make the agents enter the classroom in sequence and walk to their predefined position
@@ -125,7 +124,6 @@ export class Classroom {
         // End of the bloc
         if (agent instanceof Student) {
             this._grid[pos.y][pos.x] = 0;
-            //console.log("Student entered at", pos.x, pos.y, "Student : ", agent);
             pos = agent._desk._coordGrid;
             this._grid[pos.y][pos.x] = agent;
 
@@ -136,18 +134,15 @@ export class Classroom {
     }
 
     moveAgent(agent, oldPos, newPos) {
-        console.log("Moving agent from", oldPos, "to", newPos);
+
         if (this._grid[oldPos.y][oldPos.x] === agent && this._grid[newPos.y][newPos.x] === 0) {
             this._grid[oldPos.y][oldPos.x] = 0;
             this._grid[newPos.y][newPos.x] = agent;
-            console.log("Move successful");
             return true;
         } else {
-            console.log("Move failed");
             return false;
         }
     }
-
 
 
     initializeGrid() {
@@ -188,7 +183,7 @@ export class Classroom {
                 } else {
                     if (this._grid[i][j] === 42) {
                         graphics.beginFill(0xFF00FF);
-                    } else if (this._grid[i][j] !=0) {
+                    } else if (this._grid[i][j] != 0) {
                         graphics.beginFill(0x000000);
                     } else {
                         graphics.beginFill(0x0000FF);
@@ -293,9 +288,10 @@ export class Classroom {
 
         return node.neighbors;
     }
+
     //draw the rectangle debug display of the classroom (desk)
     displayDesks(app) {
-        for(let desk of this._desksTeacher) {
+        for (let desk of this._desksTeacher) {
             let graphics = new PIXI.Graphics();
             let coords = GridCoordsToDisplayCoords(desk._coordGrid.x, desk._coordGrid.y);
             let points = [

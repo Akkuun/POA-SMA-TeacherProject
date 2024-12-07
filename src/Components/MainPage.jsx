@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import OptionsWindow from './OptionWindow.jsx';
-import Classroom, {classroom_ncols} from './Classroom';
+import Classroom, {classroom_ncols, GridCoordsToDisplayCoords} from './Classroom';
 import Student from './Student';
 import {Teacher} from './Teacher';
 import {DEBUG} from './Global';
@@ -126,18 +126,32 @@ function displayClassroom(app, classroom) {
         });
     }
     for (let teacher of classroom._teachers) {
-        console.log(teacher);
         PIXI.Assets.load('../../src/assets/teacher.png').then((texture) => {
             const teacherSprite = new PIXI.Sprite(texture);
             teacherSprite.zIndex = 11;
             teacherSprite.width = teacher._width;
             teacherSprite.height = teacher._height;
-            teacherSprite.anchor.set(0, 0.5); // Set the anchor point to the center of the sprite to (1, 0.5) for each Agent's sprite to center it on the middle of the cell
+            teacherSprite.anchor.set(0.5, 1); // Set the anchor point to the center of the sprite to (1, 0.5) for each Agent's sprite to center it on the middle of the cell
             app.stage.addChild(teacherSprite);
             teacher.setSprite(teacherSprite);
             teacher.display();
         });
     }
+
+    // Charger et afficher les bonbons
+    let candy = classroom._candy;
+    PIXI.Assets.load('../../src/assets/jar_candy_full.png').then((texture) => {
+        const candySprite = new PIXI.Sprite(texture);
+        candySprite.zIndex = 11;
+        candySprite.width = 20;
+        candySprite.height = 20;
+        candySprite.anchor.set(0.5, 1)
+        app.stage.addChild(candySprite);
+        candySprite.x = GridCoordsToDisplayCoords(candy.x, candy.y).x;
+        candySprite.y = GridCoordsToDisplayCoords(candy.x, candy.y).y;
+
+    });
+
 }
 
 // eslint-disable-next-line react/prop-types
@@ -156,7 +170,7 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
     const classroom = new Classroom(app);
     classroom.setCandy({x: 30, y: 10});
 
-    const nstudent = 20;
+    const nstudent = 0;
     const nteacher = 1;
 
     fillGridCell(nstudent, classroom, app);
@@ -172,6 +186,11 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
         for (let i = 0; i < nstudent; i++) {
             let student = classroom._students[i];
             student.choseAgentAction();
+        }
+        for (let i = 0; i < nteacher; i++) {
+            let teacher = classroom._teachers[i];
+            teacher.choseAgentAction();
+            teacher.displayDebugPatrouille();
         }
         if (DEBUG) classroom.displayDebugGrid(); // RED = Student, GREEN = Teacher, BLUE = Empty, BLACK = Something else
     });
