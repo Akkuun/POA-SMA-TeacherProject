@@ -1,5 +1,4 @@
-import {classroom_nrows, classroom_ncols, GridCellCenterForDisplay} from './Classroom';
-import Graph from "./Graph.js";
+import {classroom_ncols, classroom_nrows, GridCellCenterForDisplay} from './Classroom';
 
 export const Action = {
     Up: 'Up',
@@ -44,20 +43,18 @@ export class Agent {
         this._sprite = sprite;
     }
 
-    getNextDirection(current, next){
-        console.log("Comparing", current, next);
-        if(next.x > current.x){
+    getNextDirection(current, next) {
+        next = {x: next.y, y: next.x};
+        if (next.x > current.x) {
             return Action.Right;
-        }else if(next.x < current.x){
+        } else if (next.x < current.x) {
             return Action.Left;
-        }else if(next.y > current.y){
+        } else if (next.y > current.y) {
             return Action.Down;
-        }else if(next.y < current.y){
+        } else if (next.y < current.y) {
             return Action.Up;
         }
     }
-
-
 
 
     //function that find the path to the destination
@@ -73,7 +70,6 @@ export class Agent {
         // graph.test();
 
 
-
         //c.displayDebugGridCellIJ(2, 3); //
 
 
@@ -85,6 +81,10 @@ export class Agent {
 
     }
 
+    // function that return true if the agent is on a cell adjacent to the destination
+    oneOf(gridPosA, gridPosB) {
+        return (Math.abs(gridPosA.x - gridPosB.x) + Math.abs(gridPosA.y - gridPosB.y) === 1);
+    }
 
     move(action) {
         let oldPos = this._gridPos;

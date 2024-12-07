@@ -15,11 +15,12 @@ class Node {
 }
 
 class Graph {
-    constructor(grid,start) {
+    constructor(grid, start, destination) {
         this.grid = grid;
         this.ncols = grid.length;
         this.nrows = grid[0].length;
-        this.start=start;
+        this.start = start;
+        this.destination = destination;
         this.nodes = this.createGraphFromGrid();
     }
 
@@ -29,7 +30,7 @@ class Graph {
         // Create nodes for all valid grid positions
         for (let i = 1; i < this.ncols; i++) {
             for (let j = 1; j < this.nrows; j++) {
-                if (this.grid[i][j] === 0 || this.grid[i][j] === 42 || (i == this.start.y && j == this.start.x)) {
+                if (this.grid[i][j] === 0 || (i == this.start.y && j == this.start.x) || this.destination != null && (i == this.destination.y && j == this.destination.x)) { // si la case de destination est un student , on le met quand même dans le graph en tant que node valide
                     nodes[`${j},${i}`] = new Node(j, i);
                 }
             }
@@ -66,8 +67,9 @@ class Graph {
             );*/
         }
     }
+
     displayCells(app) {
-        for (let key in this.nodes){
+        for (let key in this.nodes) {
             let node = this.nodes[key];
             let i = node.x;
             let j = node.y;
@@ -102,9 +104,9 @@ class Graph {
         return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
     }
 
-    reverseXYOnPath(path){
+    reverseXYOnPath(path) {
         let newPath = [];
-        for (let cell of path){
+        for (let cell of path) {
             newPath.push({x: cell.y, y: cell.x});
         }
         return newPath;
@@ -165,6 +167,7 @@ class Graph {
         console.error("No path found.");
         return [];
     }
+
     //draw the start and destination cells in a different color
     drawPath(path, app) {
         for (let cell of path) {
@@ -183,16 +186,16 @@ class Graph {
             ];
             let cellDisplay = new PIXI.Polygon(points);
 
-            if(cell === path[0] || cell === path[path.length-1]){
+            if (cell === path[0] || cell === path[path.length - 1]) {
                 graphics.lineStyle(1, 0x0FF000, 1);
-            }else{
+            } else {
 
                 // Draw the border of the cell
                 graphics.lineStyle(1, 0x000000, 1);
             }
-            if(cell === path[0] || cell === path[path.length-1]){
+            if (cell === path[0] || cell === path[path.length - 1]) {
                 graphics.beginFill(0xF0FF00);
-            }else{
+            } else {
                 graphics.beginFill(0xFFFFFF);
 
             }
@@ -201,7 +204,7 @@ class Graph {
 
             // Display a dot in the center of the cell
             let dot = GridCellCenterForDisplay(j, i);
-            if(cell === path[0] || cell === path[path.length-1]){
+            if (cell === path[0] || cell === path[path.length - 1]) {
                 graphics.beginFill(0xF0FF00);
             }
             graphics.beginFill(0x0000FF);

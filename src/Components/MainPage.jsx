@@ -1,18 +1,16 @@
 import * as PIXI from 'pixi.js';
 import OptionsWindow from './OptionWindow.jsx';
-import Classroom, {classroom_ncols} from './Classroom';
+import Classroom, {classroom_ncols, GridCoordsToDisplayCoords} from './Classroom';
 import Student from './Student';
-import {Action, Agent} from './Agent';
 import {Teacher} from './Teacher';
 import {DEBUG} from './Global';
 import {Desk} from "./Desk.jsx";
-import {useEffect} from "react";
-import Graph from "./Graph.js";
 
 const maxFPS = 10; // Changes the game's speed
 const startRow = 4;
 const endRow = 25;
 const startCol = 4;
+
 const endCol = 32;
 
 const spacingX = 5;
@@ -40,7 +38,6 @@ function fillGridCell(nstudent, classroom, app) {
             break;
         }
         if (classroom._grid[currentY][currentX] === 0) {
-            //log("Desk student added at", currentX, currentY);
             classroom.addDeskStudent(new Desk(currentX, currentY));
             classroom.addStudent(new Student(app, classroom));
             currentY += spacingY;
@@ -49,7 +46,7 @@ function fillGridCell(nstudent, classroom, app) {
     }
 }
 
-function fillGridCellDeskTeacher(nteacher, classroom, app) {
+function fillDeskInClassroom(nteacher, classroom, app) {
     let deskCountTeacher = 0;
     let currentXTeacher = startColTeacher;
     let currentYTeacher = startRowTeacher;
@@ -74,7 +71,6 @@ function fillGridCellDeskTeacher(nteacher, classroom, app) {
             classroom.addTeacher(new Teacher(app, classroom));
             currentYTeacher += spacingY;
             deskCountTeacher++;
-            //console.log("Desk teacher added at", currentXTeacher, currentYTeacher);
         }
     }
 }
@@ -89,7 +85,6 @@ function displayClassroom(app, classroom) {
         terrainSprite.zIndex = -1;
         app.stage.addChild(terrainSprite);
     });
-    //console.log("Classroom : ", classroom._grid);
     // Charger et afficher les bureaux
     for (let desk of classroom._desksStudent) {
         PIXI.Assets.load('../../src/assets/student_desk.png').then((texture) => {
@@ -114,7 +109,6 @@ function displayClassroom(app, classroom) {
             app.stage.addChild(deskSprite);
             desk.setSprite(deskSprite);
             desk.display();
-            //console.log("Desk teacher displayed at", desk._coordGrid.x, desk._coordGrid.y);
         });
     }
 
@@ -131,6 +125,33 @@ function displayClassroom(app, classroom) {
             student.display();
         });
     }
+    for (let teacher of classroom._teachers) {
+        PIXI.Assets.load('../../src/assets/teacher.png').then((texture) => {
+            const teacherSprite = new PIXI.Sprite(texture);
+            teacherSprite.zIndex = 11;
+            teacherSprite.width = teacher._width;
+            teacherSprite.height = teacher._height;
+            teacherSprite.anchor.set(0.5, 1); // Set the anchor point to the center of the sprite to (1, 0.5) for each Agent's sprite to center it on the middle of the cell
+            app.stage.addChild(teacherSprite);
+            teacher.setSprite(teacherSprite);
+            teacher.display();
+        });
+    }
+
+    // Charger et afficher les bonbons
+    let candy = classroom._candy;
+    PIXI.Assets.load('../../src/assets/jar_candy_full.png').then((texture) => {
+        const candySprite = new PIXI.Sprite(texture);
+        candySprite.zIndex = 11;
+        candySprite.width = 20;
+        candySprite.height = 20;
+        candySprite.anchor.set(0.5, 1)
+        app.stage.addChild(candySprite);
+        candySprite.x = GridCoordsToDisplayCoords(candy.x, candy.y).x;
+        candySprite.y = GridCoordsToDisplayCoords(candy.x, candy.y).y;
+
+    });
+
 }
 
 // eslint-disable-next-line react/prop-types
@@ -147,68 +168,32 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
     root.appendChild(app.view);
 
     const classroom = new Classroom(app);
-    classroom.setCandy({x:30,y:10});
+    classroom.setCandy({x: 30, y: 10});
 
     const nstudent = 20;
     const nteacher = 1;
-    
+
     fillGridCell(nstudent, classroom, app);
-    fillGridCellDeskTeacher(nteacher, classroom, app);
+    fillDeskInClassroom(nteacher, classroom, app);
 
     displayClassroom(app, classroom);
 
-
-    //let graph = new Graph(classroom._grid);
-
-    //let start = {x: classroom._students[0]._gridPos.x, y: classroom._students[0]._gridPos.y}; // for debugging first student coordinates
-    //let start = { x: 1, y: 0};
-//        let start = { x: 10, y: 32};
-    //let destination = {x: 1, y: 23};
-
-
-    // let destination = {x: classroom._desksTeacher[0]._coordGrid.x, y: classroom._desksTeacher[0]._coordGrid.y};
-    // console.log(destination);
-    // classroom.displayDebugGridCell(destination);
-    // classroom.displayDebugGridCell(start);
-    // classroom.displayDebugGridCell(start);
-    // classroom.displayDebugGridCell(destination);
     classroom.displayDesks(app);
-
-    //let path = graph.A_star(start, destination);
-    // console.log("Path:", path);
-    //graph.drawPath(path, app);
-    //graph.displayCells(app);
     app.ticker.maxFPS = maxFPS;
+
+    console.log("Classroom : ", classroom._grid);
     app.ticker.add(() => {
         for (let i = 0; i < nstudent; i++) {
             let student = classroom._students[i];
-             console.log("Student", i, "is ", student);
             student.choseAgentAction();
-
-            //  let destination = classroom._desksTeacher[0]._coordGrid;
-
-            //  let student = classroom._students[i];
-            // student.findPath(destination);
-
-
-            // switch(i%4) {
-            //     case 0:
-            //         student.performAgentAction(Action.Up);
-            //         break;
-            //     case 1:
-            //         student.performAgentAction(Action.Down);
-            //         break;
-            //     case 2:
-            //         student.performAgentAction(Action.Left);
-            //         break;
-            //     case 3:
-            //         student.performAgentAction(Action.Right);
-            //         break;
-            // }
+        }
+        for (let i = 0; i < nteacher; i++) {
+            let teacher = classroom._teachers[i];
+            teacher.choseAgentAction();
+            teacher.displayDebugPatrouille();
         }
         if (DEBUG) classroom.displayDebugGrid(); // RED = Student, GREEN = Teacher, BLUE = Empty, BLACK = Something else
     });
-
 
     // Nettoyer l'application PIXI lors du démontage du composant
     return () => {
