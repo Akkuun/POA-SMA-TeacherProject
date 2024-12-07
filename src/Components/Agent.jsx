@@ -18,7 +18,7 @@ export class Agent {
         this._classroom = p_classroom;
     }
 
-    // Computes the display position of the student's sprite from its model position
+    // Computes the display position of the student's sprite from its model  position
     display() {
         if (this._sprite) {
             let coords = GridCellCenterForDisplay(this._gridPos.x, this._gridPos.y);
