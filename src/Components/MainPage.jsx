@@ -28,6 +28,16 @@ const startColTeacher = 33;
 const endColTeacher = classroom_ncols - 1;
 
 
+const nstudent = 20;
+const nteacher = 1;
+
+let nCandiesTaken = 0;
+
+
+function updateCandiesTakenText(candiesTakenText) {
+    candiesTakenText.text = 'Candies taken: ' + nCandiesTaken;
+}
+
 function fillGridCell(nstudent, classroom, app) {
     while (deskCount < nstudent && (currentX <= endCol || currentY <= endRow)) { // while there are still desks to place and we haven't reached the end of the classroom
         if (currentY > endRow) {
@@ -170,28 +180,34 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
     const classroom = new Classroom(app);
     classroom.setCandy({x: 30, y: 10});
 
-    const nstudent = 20;
-    const nteacher = 1;
+
 
     fillGridCell(nstudent, classroom, app);
     fillDeskInClassroom(nteacher, classroom, app);
 
     displayClassroom(app, classroom);
+    let candiesTakenText = new PIXI.Text('Candies taken: ' + nCandiesTaken, {fontFamily: 'Arial', fontSize: 24, fill: 0xFFFFFF});
+    candiesTakenText.x = 10;
+    candiesTakenText.y = 10;
+    app.stage.addChild(candiesTakenText);
 
     classroom.displayDesks(app);
     app.ticker.maxFPS = maxFPS;
 
     console.log("Classroom : ", classroom._grid);
     app.ticker.add(() => {
+        nCandiesTaken = 0;
         for (let i = 0; i < nstudent; i++) {
             let student = classroom._students[i];
             student.choseAgentAction();
+            nCandiesTaken += student._candies;
         }
         for (let i = 0; i < nteacher; i++) {
             let teacher = classroom._teachers[i];
             teacher.choseAgentAction();
             teacher.displayDebugPatrouille();
         }
+        updateCandiesTakenText(candiesTakenText);
         if (DEBUG) classroom.displayDebugGrid(); // RED = Student, GREEN = Teacher, BLUE = Empty, BLACK = Something else
     });
 
