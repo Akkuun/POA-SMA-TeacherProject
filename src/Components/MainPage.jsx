@@ -3,7 +3,7 @@ import OptionsWindow from './OptionWindow.jsx';
 import Classroom, {classroom_ncols, GridCoordsToDisplayCoords} from './Classroom';
 import Student from './Student';
 import {Teacher} from './Teacher';
-import {DEBUG} from './Global';
+import {DEBUG,vecDot,vecLength,DownVector, WindowHeight, WindowWidth} from './Global';
 import {Desk} from "./Desk.jsx";
 
 const maxFPS = 10; // Changes the game's speed
@@ -186,9 +186,12 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
     fillDeskInClassroom(nteacher, classroom, app);
 
     displayClassroom(app, classroom);
+
     let candiesTakenText = new PIXI.Text('Candies taken: ' + nCandiesTaken, {fontFamily: 'Arial', fontSize: 24, fill: 0xFFFFFF});
-    candiesTakenText.x = 10;
-    candiesTakenText.y = 10;
+    candiesTakenText.x = WindowWidth * 0.75;
+    candiesTakenText.y = WindowHeight * 0.3;
+    candiesTakenText.zIndex = 20;
+    candiesTakenText.rotation = Math.acos(vecDot({x: 1, y: 0}, DownVector) / (vecLength({x: 1, y: 0}) * vecLength(DownVector)));
     app.stage.addChild(candiesTakenText);
 
     classroom.displayDesks(app);
