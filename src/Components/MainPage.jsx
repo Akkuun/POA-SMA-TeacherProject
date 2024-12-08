@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import Classroom, {classroom_ncols, GridCoordsToDisplayCoords} from './Classroom';
+import Classroom, {classroom_ncols, ClassroomState, GridCoordsToDisplayCoords} from './Classroom';
 import Student from './Student';
 import {Teacher} from './Teacher';
 import {DEBUG, DownVector, vecDot, vecLength, WindowHeight, WindowWidth} from './Global';
@@ -184,6 +184,8 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
     classroom.setCandy({x: 30, y: 10});
     const nstudent = studentNumber;
     const nteacher = teacherNumber;
+    classroom._nstudents = nstudent;
+    classroom._nteachers = nteacher;
 
     fillGridCell(nstudent, classroom, app);
     fillDeskInClassroom(nteacher, classroom, app);
@@ -220,7 +222,13 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
 
     console.log("Classroom : ", classroom._grid);
     app.ticker.add(() => {
+        console.log("Classroom state : ", classroom._state);
+        //console.log("classroom : ", classroom);
+        if (classroom._state === "StartAnimation") {
+            classroom.agentEnter();
+        }
         nCandiesTaken = 0;
+        
         for (let i = 0; i < nstudent; i++) {
             let student = classroom._students[i];
             student.choseAgentAction();
@@ -232,17 +240,14 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
             teacher.displayDebugPatrouille();
         }
         updateCandiesTakenText(candiesTakenText);
+        
         if (DEBUG) classroom.displayDebugGrid(); // RED = Student, GREEN = Teacher, BLUE = Empty, BLACK = Something else
     });
 
     // Nettoyer l'application PIXI lors du démontage du composant
-    /* return () => {
+    return () => {
          app.destroy(true, {children: true});
-     };*/
-
-    return (
-
-    );
+     };
 }
 
 export default MainPage;
