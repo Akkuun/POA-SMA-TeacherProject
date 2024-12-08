@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import Classroom, {classroom_ncols, GridCoordsToDisplayCoords} from './Classroom';
+import Classroom, {classroom_ncols, ClassroomState, GridCoordsToDisplayCoords} from './Classroom';
 import Student from './Student';
 import {Teacher} from './Teacher';
 import {DEBUG, DownVector, vecDot, vecLength, WindowHeight, WindowWidth} from './Global';
@@ -87,6 +87,7 @@ function fillDeskInClassroom(nteacher, classroom, app) {
         }
     }
 }
+let opened_door_sprite;
 
 function displayClassroom(app, classroom) {
     PIXI.Assets.load('../../src/assets/map.png').then((texture) => {
@@ -95,8 +96,17 @@ function displayClassroom(app, classroom) {
         terrainSprite.height = window.innerHeight; // Redimensionner pour prendre toute la hauteur
         terrainSprite.x = (window.innerWidth - terrainSprite.width); // Centrer horizontalement
         terrainSprite.y = (window.innerHeight - terrainSprite.height); // Centrer verticalement
-        terrainSprite.zIndex = -1;
+        terrainSprite.zIndex = -2;
         app.stage.addChild(terrainSprite);
+    });
+    PIXI.Assets.load('../../src/assets/opened_door.png').then((texture) => {
+        opened_door_sprite = new PIXI.Sprite(texture);
+        opened_door_sprite.width = window.innerWidth;  // Redimensionner pour prendre toute la largeur
+        opened_door_sprite.height = window.innerHeight; // Redimensionner pour prendre toute la hauteur
+        opened_door_sprite.x = (window.innerWidth - opened_door_sprite.width); // Centrer horizontalement
+        opened_door_sprite.y = (window.innerHeight - opened_door_sprite.height); // Centrer verticalement
+        opened_door_sprite.zIndex = -1;
+        app.stage.addChild(opened_door_sprite);
     });
     // Charger et afficher les bureaux
     for (let desk of classroom._desksStudent) {
@@ -184,6 +194,8 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
     classroom.setCandy({x: 30, y: 10});
     const nstudent = studentNumber;
     const nteacher = teacherNumber;
+    classroom._nstudents = nstudent;
+    classroom._nteachers = nteacher;
 
     fillGridCell(nstudent, classroom, app);
     fillDeskInClassroom(nteacher, classroom, app);
@@ -218,9 +230,18 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
     classroom.displayDesks(app);
     app.ticker.maxFPS = maxFPS;
 
-    console.log("Classroom : ", classroom._grid);
+    //console.log("Classroom : ", classroom._grid);
     app.ticker.add(() => {
+
+        if (classroom._state === "StartAnimation") {
+            classroom.agentEnter();
+            if (classroom._agentsWaitingToEnter.length === 0 && opened_door_sprite) {
+                opened_door_sprite.destroy(true);
+                opened_door_sprite = null;
+            }
+        }
         nCandiesTaken = 0;
+        
         for (let i = 0; i < nstudent; i++) {
             let student = classroom._students[i];
             student.choseAgentAction();
@@ -232,17 +253,14 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
             teacher.displayDebugPatrouille();
         }
         updateCandiesTakenText(candiesTakenText);
+        
         if (DEBUG) classroom.displayDebugGrid(); // RED = Student, GREEN = Teacher, BLUE = Empty, BLACK = Something else
     });
 
     // Nettoyer l'application PIXI lors du démontage du composant
-    /* return () => {
+    return () => {
          app.destroy(true, {children: true});
-     };*/
-
-    return (
-
-    );
+     };
 }
 
 export default MainPage;
