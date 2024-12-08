@@ -15,6 +15,7 @@ export class Student extends Agent {
     _desk;
     _candies;
     _sprite;
+    _positions;
 
     constructor(p_app, p_classroom) {
         super(p_app, p_classroom);
@@ -22,6 +23,7 @@ export class Student extends Agent {
         this._height = 37 / 405 * WindowHeight * 50 / 68;
         this._state = StudentState.Idle;
         this._candies = 0;
+        this._positions = [];
     }
 
     changeState(status) {
@@ -93,6 +95,10 @@ export class Student extends Agent {
         PIXI.Assets.load(newTexture).then((texture) => {
             this._sprite.texture = texture;
         });
+    }
+
+    getPosition() {
+        return this._positions;
     }
 
 }

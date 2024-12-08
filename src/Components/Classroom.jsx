@@ -41,12 +41,13 @@ export class Classroom {
     _agentsWaitingToEnter = []; // array that contains the agents waiting to enter the classroom for a start animation
     _students = []; // array that contains the students in the classroom
     _teachers = []; // array that contains the teachers in the classroom
-
     _grid = []; // array that contains the grid of the classroom. Each cell can contain an agent or 0 if the cell is empty, or something else if the cell is occupied by something else (TODO)
+    _heatmap = [];
 
     constructor(app) {
         this._app = app;
         this.initializeGrid();
+        this.initHeatmap();
     }
 
     forceAgentPosForDebug(agent, pos) {
@@ -310,6 +311,64 @@ export class Classroom {
             app.stage.addChild(graphics);
         }
     }
+
+    initHeatmap() {
+        for (let i = 0; i < classroom_nrows; i++) {
+            let row = [];
+            for (let j = 0; j < classroom_ncols; j++) {
+                row.push(0);
+            }
+            this._heatmap.push(row);
+        }
+    }
+
+    // on parcours toutes les cases, et si on trouve un student, on incrémente la case de 1
+    getHeatmap() {
+        for (let i = 0; i < classroom_nrows; i++) {
+            for (let j = 0; j < classroom_ncols; j++) {
+
+
+                // pour ne pas comtper les cases où les étudiants sont à leur bureau sans bouger ( ce qui fausserait la heatmap)
+                if (this._grid[i][j] instanceof Student && !(this._grid[i][j + 1] instanceof Desk)) {
+                    this._heatmap[i][j]++;
+                }
+            }
+        }
+    }
+
+    displayHeatmap() {
+        let graphics = new PIXI.Graphics();
+        let max = 0;
+        for (let i = 0; i < classroom_nrows; i++) {
+            for (let j = 0; j < classroom_ncols; j++) {
+                max = Math.max(max, this._heatmap[i][j]);
+            }
+        }
+        for (let i = 0; i < classroom_nrows; i++) {
+            for (let j = 0; j < classroom_ncols; j++) {
+                let coords = GridCoordsToDisplayCoords(j, i);
+                let points = [
+                    new PIXI.Point(coords.x, coords.y),
+                    new PIXI.Point(coords.x + cellUnit.x * RightVector.x, coords.y + cellUnit.x * RightVector.y),
+                    new PIXI.Point(coords.x + cellUnit.x * RightVector.x + cellUnit.y * DownVector.x, coords.y + cellUnit.x * RightVector.y + cellUnit.y * DownVector.y),
+                    new PIXI.Point(coords.x + cellUnit.y * DownVector.x, coords.y + cellUnit.y * DownVector.y)
+                ];
+                let cellDisplay = new PIXI.Polygon(points);
+                // draw the border of the cell
+                graphics.lineStyle(1, 0x000000, 1);
+                graphics.beginFill(0xFF0000, this._heatmap[i][j] / max);
+                graphics.drawPolygon(cellDisplay);
+                graphics.endFill();
+            }
+        }
+        graphics.zIndex = 1;
+        this._app.stage.addChild(graphics);
+    }
+
+    getHeatMapObject() {
+        return this._heatmap;
+    }
+
 
 }
 

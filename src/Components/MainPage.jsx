@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js';
-import Classroom, {classroom_ncols, GridCoordsToDisplayCoords} from './Classroom';
+import Classroom, {cellUnit, classroom_ncols, GridCoordsToDisplayCoords} from './Classroom';
 import Student from './Student';
 import {Teacher} from './Teacher';
-import {DEBUG, DownVector, vecDot, vecLength, WindowHeight, WindowWidth} from './Global';
+import {DEBUG, DownVector, RightVector, vecDot, vecLength, WindowHeight, WindowWidth} from './Global';
 import {Desk} from "./Desk.jsx";
 
 const maxFPS = 10; // Changes the game's speed
@@ -28,7 +28,7 @@ const endColTeacher = classroom_ncols - 1;
 
 
 let nCandiesTaken = 0;
-
+let heatmap = [];
 
 function updateCandiesTakenText(candiesTakenText) {
     if (candiesTakenText.style.fontFamily !== 'Chalkboard') {
@@ -218,9 +218,11 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
     classroom.displayDesks(app);
     app.ticker.maxFPS = maxFPS;
 
-    console.log("Classroom : ", classroom._grid);
     app.ticker.add(() => {
         nCandiesTaken = 0;
+        classroom.getHeatmap();
+        heatmap = classroom.getHeatMapObject();
+        //console.log(heatmap);
         for (let i = 0; i < nstudent; i++) {
             let student = classroom._students[i];
             student.choseAgentAction();
@@ -241,7 +243,59 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
      };*/
 
     return (
+        <div>
 
+            <button onClick={
+                () => {
+                    console.log(heatmap);
+                    let maxValue = 0;
+                    // Create a new window
+                    const newWindow = window.open("", "_blank");
+                    newWindow.document.write("<html><head><title>Heatmap</title></head><body></body></html>");
+
+                    // Create a canvas element
+                    const canvas = newWindow.document.createElement("canvas");
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                    newWindow.document.body.appendChild(canvas);
+
+                    const ctx = canvas.getContext("2d");
+                    for (let i = 0; i < heatmap.length; i++) {
+                        for (let j = 0; j < heatmap[i].length; j++) {
+                            maxValue = Math.max(maxValue, heatmap[i][j]);
+                            let intensity = maxValue === 0 ? 0 : heatmap[i][j] / maxValue;
+                            const r = Math.floor(intensity * 255);
+                            const g = 0;
+                            const b = Math.floor((1 - intensity) * 255);
+                            let coords = GridCoordsToDisplayCoords(j, i);
+                            ctx.fillStyle = `rgb(${r},${g},${b})`;
+
+                            let points = [
+                                new PIXI.Point(coords.x, coords.y),
+                                new PIXI.Point(coords.x + cellUnit.x * RightVector.x, coords.y + cellUnit.x * RightVector.y),
+                                new PIXI.Point(coords.x + cellUnit.x * RightVector.x + cellUnit.y * DownVector.x, coords.y + cellUnit.x * RightVector.y + cellUnit.y * DownVector.y),
+                                new PIXI.Point(coords.x + cellUnit.y * DownVector.x, coords.y + cellUnit.y * DownVector.y)
+                            ];
+                            ctx.beginPath();
+                            ctx.moveTo(points[0].x, points[0].y);
+                            for (let k = 1; k < points.length; k++) {
+                                ctx.lineTo(points[k].x, points[k].y);
+                            }
+                            ctx.closePath();
+                            ctx.fill();
+                            
+
+                            console.log(intensity)
+                        }
+                    }
+
+                }
+            }>
+                See heatmap
+            </button>
+
+
+        </div>
     );
 }
 
