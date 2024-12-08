@@ -286,7 +286,7 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
                         for (let j = 0; j < heatmap[i].length; j++) {
                             maxValue = Math.max(maxValue, heatmap[i][j]);
                             let intensity = maxValue === 0 ? 0 : heatmap[i][j] / maxValue;
-                            const r = Math.floor(intensity * 255);
+                            const r = 1 - Math.floor(intensity * 255);
                             const g = 0;
                             const b = Math.floor((1 - intensity) * 255);
                             let coords = GridCoordsToDisplayCoords(j, i);
