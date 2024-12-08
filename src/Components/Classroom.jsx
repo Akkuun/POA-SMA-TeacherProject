@@ -4,6 +4,10 @@ import {Desk} from "./Desk.jsx";
 
 import * as PIXI from 'pixi.js';
 
+export const ClassroomState = {
+    StartAnimation: "StartAnimation",
+    Playing: "Playing",
+}
 
 export const classroom_nrows = 27;
 export const classroom_ncols = 41;
@@ -41,6 +45,12 @@ export class Classroom {
     _agentsWaitingToEnter = []; // array that contains the agents waiting to enter the classroom for a start animation
     _students = []; // array that contains the students in the classroom
     _teachers = []; // array that contains the teachers in the classroom
+    _nstudents;
+    _nteachers;
+
+    _grid = []; // array that contains the grid of the classroom. Each cell can contain an agent or 0 if the cell is empty, or something else if the cell is occupied by something else
+
+    _state;
     _grid = []; // array that contains the grid of the classroom. Each cell can contain an agent or 0 if the cell is empty, or something else if the cell is occupied by something else (TODO)
     _heatmap = [];
 
@@ -48,6 +58,7 @@ export class Classroom {
         this._app = app;
         this.initializeGrid();
         this.initHeatmap();
+        this._state = ClassroomState.StartAnimation;
     }
 
     forceAgentPosForDebug(agent, pos) {
@@ -76,7 +87,6 @@ export class Classroom {
         this._students.push(student);
         this.addAgent(student);
         this.assignDeskToStudent(student);
-        this.agentEnter();
     }
 
 
@@ -95,7 +105,6 @@ export class Classroom {
         this._teachers.push(teacher);
         this.addAgent(teacher);
         this.assignDeskToTeacher(teacher);
-        this.agentEnter();
     }
 
     addAgent(agent) {
@@ -108,30 +117,38 @@ export class Classroom {
     }
 
     agentEnter() { // Will be useful to make the agents enter the classroom in sequence and walk to their predefined position
-        let agent = this._agentsWaitingToEnter.pop();
-
-        // Replace this bloc by either the entrance position and check if it is empty or a predefined position for each agent
-        let pos = {
-            x: Math.floor(Math.random() * (classroom_ncols - 1)),
-            y: Math.floor(Math.random() * (classroom_nrows - 1))
+        if (this._agentsWaitingToEnter.length === 0 && this._students.length === this._nstudents && this._teachers.length === this._nteachers) {
+            for (let student of this._students) {
+                if (student._state === "StartAnimation") {
+                    return;
+                }
+            }
+            for (let teacher of this._teachers) {
+                if (teacher._state === "StartAnimation") {
+                    return;
+                }
+            }
+            this._state = ClassroomState.Playing;
+            return;
         }
-        while (this._grid[pos.y][pos.x] !== 0) {
-            pos = {
-                x: Math.floor(Math.random() * (classroom_ncols - 1)),
-                y: Math.floor(Math.random() * (classroom_nrows - 1))
+        let enter1 = {x: 17, y : 1};
+        let enter2 = {x: 18, y : 1};
+        if (this._grid[enter1.y][enter1.x] === 0) {
+            let agent1 = this._agentsWaitingToEnter.pop();
+            if (agent1 !== undefined) {
+                this._grid[enter1.y][enter1.x] = agent1;
+                agent1.setGridPos(enter1);
+                agent1.display();
             }
         }
-        this._grid[pos.y][pos.x] = agent;
-        // End of the bloc
-        if (agent instanceof Student) {
-            this._grid[pos.y][pos.x] = 0;
-            pos = agent._desk._coordGrid;
-            this._grid[pos.y][pos.x] = agent;
-
+        if (this._grid[enter2.y][enter2.x] === 0) {
+            let agent2 = this._agentsWaitingToEnter.pop();
+            if (agent2 !== undefined) {
+                this._grid[enter2.y][enter2.x] = agent2;
+                agent2.setGridPos(enter2);
+                agent2.display();
+            }
         }
-
-        agent.setGridPos(pos);
-        agent.display();
     }
 
     moveAgent(agent, oldPos, newPos) {
