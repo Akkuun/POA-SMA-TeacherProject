@@ -7,6 +7,7 @@ function App() {
     const [gameStarted, setGameStarted] = useState(false);
     const [sweetNumber, setSweetNumber] = useState(1);
     const [studentNumber, setStudentNumber] = useState(20);
+    const [teacherNumber, setTeacherNumber] = useState(1);
 
     const startGame = () => {
         setGameStarted(true);
@@ -20,6 +21,8 @@ function App() {
                     studentNumber={studentNumber}
                     setSweetNumber={setSweetNumber}
                     setStudentNumber={setStudentNumber}
+                    teacherNumber={teacherNumber}
+                    setTeacherNumber={setTeacherNumber}
                 />
             ) : (
                 <MenuComponent
@@ -28,6 +31,8 @@ function App() {
                     setSweetNumber={setSweetNumber}
                     studentNumber={studentNumber}
                     setStudentNumber={setStudentNumber}
+                    teacherNumber={teacherNumber}
+                    setTeacherNumber={setTeacherNumber}
                 />
             )}
         </div>

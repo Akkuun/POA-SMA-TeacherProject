@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js';
-import OptionsWindow from './OptionWindow.jsx';
 import Classroom, {classroom_ncols, GridCoordsToDisplayCoords} from './Classroom';
 import Student from './Student';
 import {Teacher} from './Teacher';
@@ -27,8 +26,6 @@ const endRowTeacher = 25;
 const startColTeacher = 33;
 const endColTeacher = classroom_ncols - 1;
 
-
-const nteacher = 2;
 
 let nCandiesTaken = 0;
 
@@ -171,7 +168,7 @@ function displayClassroom(app, classroom) {
 }
 
 // eslint-disable-next-line react/prop-types
-const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}) => {
+const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber, setTeacherNumber, teacherNumber}) => {
     const app = new PIXI.Application({
         width: window.innerWidth,  // Largeur de la fenêtre
         height: window.innerHeight, // Hauteur de la fenêtre
@@ -186,7 +183,7 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
     const classroom = new Classroom(app);
     classroom.setCandy({x: 30, y: 10});
     const nstudent = studentNumber;
-
+    const nteacher = teacherNumber;
 
     fillGridCell(nstudent, classroom, app);
     fillDeskInClassroom(nteacher, classroom, app);
@@ -239,19 +236,12 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber}
     });
 
     // Nettoyer l'application PIXI lors du démontage du composant
-    return () => {
-        app.destroy(true, {children: true});
-    };
+    /* return () => {
+         app.destroy(true, {children: true});
+     };*/
 
     return (
-        <div id="pixi-container">
-            <OptionsWindow
-                sweetNumber={sweetNumber}
-                studentNumber={studentNumber}
-                setSweetNumber={setSweetNumber}
-                setStudentNumber={setStudentNumber}
-            />
-        </div>
+
     );
 }
 
