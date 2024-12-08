@@ -57,30 +57,6 @@ export class Agent {
     }
 
 
-    //function that find the path to the destination
-    //using the A* algorithm
-    findPath(Destination) {
-        let c = this._classroom;
-        // draw the grid for debug
-        //display the destination
-        this._classroom.displayDebugGridCell(Destination);
-
-
-        // let graph = new Graph(c._grid).graph;
-        // graph.test();
-
-
-        //c.displayDebugGridCellIJ(2, 3); //
-
-
-        // this._classroom.displayDebugGridCell(graph[100]);
-        // this._classroom.displayDebugGridCellNeighbors(graph[100])
-
-        // let path = this.A_star(this._gridPos, Destination, graph);
-        // console.log(path);
-
-    }
-
     // function that return true if the agent is on a cell adjacent to the destination
     oneOf(gridPosA, gridPosB) {
         return (Math.abs(gridPosA.x - gridPosB.x) + Math.abs(gridPosA.y - gridPosB.y) === 1);

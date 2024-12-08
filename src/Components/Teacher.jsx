@@ -48,7 +48,7 @@ export class Teacher extends Agent {
                         if (Math.abs(start.x - student._gridPos.x) + Math.abs(start.y - student._gridPos.y) < Math.abs(start.x - closestStudent._gridPos.x) + Math.abs(start.y - closestStudent._gridPos.y)) {
                             closestStudent = student;
                         }
-    
+
                     }
                 }
             }
@@ -66,7 +66,7 @@ export class Teacher extends Agent {
         // Calcule la route (pathfinding) pour aller à la destination
         let graph = new Graph(this._classroom._grid, this._gridPos, destination);
         //console.log(graph);
-            
+
         let path = graph.A_star(start, destination);
         if (path.length > 0) {
             // Fait le prochain mouvement
