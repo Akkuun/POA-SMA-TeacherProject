@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js';
-import OptionsWindow from './OptionWindow.jsx';
 import Classroom, {classroom_ncols, GridCoordsToDisplayCoords} from './Classroom';
 import Student from './Student';
 import {Teacher} from './Teacher';
@@ -237,19 +236,12 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
     });
 
     // Nettoyer l'application PIXI lors du démontage du composant
-    return () => {
-        app.destroy(true, {children: true});
-    };
+    /* return () => {
+         app.destroy(true, {children: true});
+     };*/
 
     return (
-        <div id="pixi-container">
-            <OptionsWindow
-                sweetNumber={sweetNumber}
-                studentNumber={studentNumber}
-                setSweetNumber={setSweetNumber}
-                setStudentNumber={setStudentNumber}
-            />
-        </div>
+
     );
 }
 
