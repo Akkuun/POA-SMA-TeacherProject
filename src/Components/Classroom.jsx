@@ -132,9 +132,11 @@ export class Classroom {
         let enter2 = {x: 18, y : 1};
         if (this._grid[enter1.y][enter1.x] === 0) {
             let agent1 = this._agentsWaitingToEnter.pop();
-            this._grid[enter1.y][enter1.x] = agent1;
-            agent1.setGridPos(enter1);
-            agent1.display();
+            if (agent1 !== undefined) {
+                this._grid[enter1.y][enter1.x] = agent1;
+                agent1.setGridPos(enter1);
+                agent1.display();
+            }
         }
         if (this._grid[enter2.y][enter2.x] === 0) {
             let agent2 = this._agentsWaitingToEnter.pop();

@@ -87,6 +87,7 @@ function fillDeskInClassroom(nteacher, classroom, app) {
         }
     }
 }
+let opened_door_sprite;
 
 function displayClassroom(app, classroom) {
     PIXI.Assets.load('../../src/assets/map.png').then((texture) => {
@@ -95,8 +96,17 @@ function displayClassroom(app, classroom) {
         terrainSprite.height = window.innerHeight; // Redimensionner pour prendre toute la hauteur
         terrainSprite.x = (window.innerWidth - terrainSprite.width); // Centrer horizontalement
         terrainSprite.y = (window.innerHeight - terrainSprite.height); // Centrer verticalement
-        terrainSprite.zIndex = -1;
+        terrainSprite.zIndex = -2;
         app.stage.addChild(terrainSprite);
+    });
+    PIXI.Assets.load('../../src/assets/opened_door.png').then((texture) => {
+        opened_door_sprite = new PIXI.Sprite(texture);
+        opened_door_sprite.width = window.innerWidth;  // Redimensionner pour prendre toute la largeur
+        opened_door_sprite.height = window.innerHeight; // Redimensionner pour prendre toute la hauteur
+        opened_door_sprite.x = (window.innerWidth - opened_door_sprite.width); // Centrer horizontalement
+        opened_door_sprite.y = (window.innerHeight - opened_door_sprite.height); // Centrer verticalement
+        opened_door_sprite.zIndex = -1;
+        app.stage.addChild(opened_door_sprite);
     });
     // Charger et afficher les bureaux
     for (let desk of classroom._desksStudent) {
@@ -220,12 +230,15 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
     classroom.displayDesks(app);
     app.ticker.maxFPS = maxFPS;
 
-    console.log("Classroom : ", classroom._grid);
+    //console.log("Classroom : ", classroom._grid);
     app.ticker.add(() => {
-        console.log("Classroom state : ", classroom._state);
-        //console.log("classroom : ", classroom);
+
         if (classroom._state === "StartAnimation") {
             classroom.agentEnter();
+            if (classroom._agentsWaitingToEnter.length === 0 && opened_door_sprite) {
+                opened_door_sprite.destroy(true);
+                opened_door_sprite = null;
+            }
         }
         nCandiesTaken = 0;
         

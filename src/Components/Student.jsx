@@ -46,6 +46,7 @@ export class Student extends Agent {
         let destination;
         let graph = new Graph(this._classroom._grid, this._gridPos, this._classroom._candy);
         if (this._classroom._state === "StartAnimation") {
+            // Si état = StartAnimation, destination = position de départ
             destination = this._desk._coordGrid;
             if (this._gridPos.x === destination.x && this._gridPos.y === destination.y) {
                 this._state = StudentState.Idle;

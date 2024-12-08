@@ -32,7 +32,8 @@ export class Teacher extends Agent {
         let destination = null;
         let closestStudent = null;
         if (this._classroom._state === ClassroomState.StartAnimation) {
-            destination = this._patrolPoints[0];
+            // Si état = StartAnimation, destination = position de départ
+            destination = {x:this._desk._coordGrid.x+1, y:this._desk._coordGrid.y};
             if (start.x === destination.x && start.y === destination.y) {
                 this._state = TeacherState.Patrolling;
                 return;
@@ -55,22 +56,22 @@ export class Teacher extends Agent {
             // Si état = Patrolling, destination = prochain point de patrouille
             if (this._state === TeacherState.Patrolling) {
                 destination = this.getPatrolPoint();
-                console.log("Point de patrouille : ", destination);
+               // console.log("Point de patrouille : ", destination);
             }
             if (this._state === TeacherState.MovingToStudent) {
                 destination = closestStudent._gridPos;
-                console.log("Closest student position", destination);
+                //console.log("Closest student position", destination);
             }
         }
         // Calcule la route (pathfinding) pour aller à la destination
         let graph = new Graph(this._classroom._grid, this._gridPos, destination);
-        console.log(graph);
+        //console.log(graph);
             
         let path = graph.A_star(start, destination);
         if (path.length > 0) {
             // Fait le prochain mouvement
             let direction = this.getNextDirection(start, path[1]);
-            console.log("Direction : ", direction);
+            //console.log("Direction : ", direction);
             this.performAgentAction(direction);
         }
 
