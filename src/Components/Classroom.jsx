@@ -386,6 +386,11 @@ export class Classroom {
         return this._heatmap;
     }
 
+    //partie stat : on note a chaque fois qu'un élève pars et quand il revient et on recupère :
+    // le ratio de recupération des élèves
+    // le temps de voyage moyen des élèves
+    // le nombre de déplacement moyen des élèves
+    // tous ces paramètre en fonction de la stratégie choisi
 
 }
 
