@@ -345,9 +345,8 @@ export class Classroom {
         for (let i = 0; i < classroom_nrows; i++) {
             for (let j = 0; j < classroom_ncols; j++) {
 
-
                 // pour ne pas comtper les cases où les étudiants sont à leur bureau sans bouger ( ce qui fausserait la heatmap)
-                if (this._grid[i][j] instanceof Student && !(this._grid[i][j + 1] instanceof Desk)) {
+                if (this._grid[i][j] instanceof Student && !(this._grid[i][j + 1] instanceof Desk) &&  !(this._grid[i][j]._state === "StartAnimation")) {
                     this._heatmap[i][j]++;
                 }
             }

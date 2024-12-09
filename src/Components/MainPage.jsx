@@ -6,6 +6,8 @@ import {Teacher} from './Teacher';
 import {DEBUG, DownVector, RightVector, vecDot, vecLength, WindowHeight, WindowWidth} from './Global';
 import {Desk} from "./Desk.jsx";
 
+import '../styles/css/MainPage.css';
+
 const maxFPS = 10; // Changes the game's speed
 const startRow = 4;
 const endRow = 25;
@@ -259,17 +261,10 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
         if (DEBUG) classroom.displayDebugGrid(); // RED = Student, GREEN = Teacher, BLUE = Empty, BLACK = Something else
     });
 
-    // Nettoyer l'application PIXI lors du démontage du composant
-    /* return () => {
-         app.destroy(true, {children: true});
-     };*/
-
     return (
         <div>
-
-            <button onClick={
+            <button id="heatmap" onClick={
                 () => {
-                    console.log(heatmap);
                     let maxValue = 0;
                     // Create a new window
                     const newWindow = window.open("", "_blank");
@@ -286,9 +281,62 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
                         for (let j = 0; j < heatmap[i].length; j++) {
                             maxValue = Math.max(maxValue, heatmap[i][j]);
                             let intensity = maxValue === 0 ? 0 : heatmap[i][j] / maxValue;
-                            const r = 1 - Math.floor(intensity * 255);
-                            const g = 0;
-                            const b = Math.floor((1 - intensity) * 255);
+                            // HHL value
+                            const h = Math.floor((1 - intensity) * 220);
+                            const l = 50
+                            const s = 100;
+
+
+                            let coords = GridCoordsToDisplayCoords(j, i);
+                            ctx.fillStyle = `hsl(${h},${s}%,${l}%)`;
+
+                            let points = [
+                                new PIXI.Point(coords.x, coords.y),
+                                new PIXI.Point(coords.x + cellUnit.x * RightVector.x, coords.y + cellUnit.x * RightVector.y),
+                                new PIXI.Point(coords.x + cellUnit.x * RightVector.x + cellUnit.y * DownVector.x, coords.y + cellUnit.x * RightVector.y + cellUnit.y * DownVector.y),
+                                new PIXI.Point(coords.x + cellUnit.y * DownVector.x, coords.y + cellUnit.y * DownVector.y)
+                            ];
+                            ctx.beginPath();
+                            ctx.moveTo(points[0].x, points[0].y);
+                            for (let k = 1; k < points.length; k++) {
+                                ctx.lineTo(points[k].x, points[k].y);
+                            }
+                            ctx.closePath();
+                            ctx.fill();
+
+                        }
+                    }
+
+                }
+            }>
+                See heatmap HLS
+            </button>
+
+
+            <button id="heatmapBlack" onClick={
+                () => {
+                    let maxValue = 0;
+                    // Create a new window
+                    const newWindow = window.open("", "_blank");
+                    newWindow.document.write("<html><head><title>Heatmap</title></head><body></body></html>");
+
+                    // Create a canvas element
+                    const canvas = newWindow.document.createElement("canvas");
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                    newWindow.document.body.appendChild(canvas);
+
+                    const ctx = canvas.getContext("2d");
+                    for (let i = 0; i < heatmap.length; i++) {
+                        for (let j = 0; j < heatmap[i].length; j++) {
+                            maxValue = Math.max(maxValue, heatmap[i][j]);
+                            let intensity = maxValue === 0 ? 0 : heatmap[i][j] / maxValue;
+                             const r = 1 - Math.floor(intensity * 255);
+                             const g = 0;
+                             const b = Math.floor((1 - intensity) * 255);
+
+
+
                             let coords = GridCoordsToDisplayCoords(j, i);
                             ctx.fillStyle = `rgb(${r},${g},${b})`;
 
@@ -306,19 +354,16 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
                             ctx.closePath();
                             ctx.fill();
 
-
-                            console.log(intensity)
                         }
                     }
 
                 }
             }>
-                See heatmap
+                See heatmap Black and White
             </button>
-
-
         </div>
+
     );
-}
+};
 
 export default MainPage;
