@@ -31,3 +31,4 @@ export const CoordInterval = { // Interval of the classroom's coordinates adapte
 
 
 export const DEBUG = false;
+export const SHOWPATH = false;
