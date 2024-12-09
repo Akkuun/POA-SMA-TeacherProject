@@ -1,5 +1,6 @@
 import {DownVector, RightVector, TopLeft} from "./Global.jsx";
-import {Student} from "./Student.jsx";
+import {Student, StudentState} from "./Student.jsx";
+import {TeacherState} from "./Teacher.jsx";
 import {Desk} from "./Desk.jsx";
 
 import * as PIXI from 'pixi.js';
@@ -119,12 +120,12 @@ export class Classroom {
     agentEnter() { // Will be useful to make the agents enter the classroom in sequence and walk to their predefined position
         if (this._agentsWaitingToEnter.length === 0 && this._students.length === this._nstudents && this._teachers.length === this._nteachers) {
             for (let student of this._students) {
-                if (student._state === "StartAnimation") {
+                if (student._state === StudentState.StartAnimation) {
                     return;
                 }
             }
             for (let teacher of this._teachers) {
-                if (teacher._state === "StartAnimation") {
+                if (teacher._state === TeacherState.StartAnimation) {
                     return;
                 }
             }
