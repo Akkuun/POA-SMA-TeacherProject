@@ -141,17 +141,31 @@ function displayClassroom(app, classroom) {
 
     // Charger et afficher les students
     for (let student of classroom._students) {
-        PIXI.Assets.load('../../src/assets/student.png').then((texture) => {
-            const studentSprite = new PIXI.Sprite(texture);
-            studentSprite.zIndex = 11;
-            studentSprite.width = student._width;
-            studentSprite.height = student._height;
-            studentSprite.anchor.set(0.5, 1); // Set the anchor point to the center of the sprite to (1, 0.5) for each Agent's sprite to center it on the middle of the cell
-            app.stage.addChild(studentSprite);
-            student.setSprite(studentSprite);
-            student.display();
+        // Load the spritesheet JSON and image
+        PIXI.Assets.load('../../src/assets/student_spritesheet.json').then((spritesheetData) => {
+            const spritesheet = new PIXI.Spritesheet(
+                PIXI.Texture.from(spritesheetData.meta.image),
+                spritesheetData
+            );
+
+            // Parse the spritesheet
+            spritesheet.parse().then(() => {
+                // Create an AnimatedSprite using the frames from the spritesheet
+                const studentSprite = new PIXI.AnimatedSprite(spritesheet.animations['student_animation']);
+                studentSprite.zIndex = 11;
+                studentSprite.width = student._width;
+                studentSprite.height = student._height;
+                studentSprite.anchor.set(0.5, 1); // Set the anchor point to the center of the sprite to (1, 0.5) for each Agent's sprite to center it on the middle of the cell
+                studentSprite.animationSpeed = 0.1; // Adjust the animation speed as needed
+                studentSprite.play(); // Start the animation
+
+                app.stage.addChild(studentSprite);
+                student.setSprite(studentSprite);
+                student.display();
+            });
         });
     }
+
     for (let teacher of classroom._teachers) {
         PIXI.Assets.load('../../src/assets/teacher.png').then((texture) => {
             const teacherSprite = new PIXI.Sprite(texture);

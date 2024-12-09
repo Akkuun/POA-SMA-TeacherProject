@@ -137,11 +137,11 @@ export class Student extends Agent {
                 if ((this._state === StudentState.MovingToCandy) && this.oneOf(this._gridPos, destination)) {
                     this._state = StudentState.MovingToDesk;
                     this._candies++;
-                    this.changeSprite('../../src/assets/student_candy.png'); //changer le sprite
+                    this.changeSprite('../../src/assets/gnome_soldier-SWEN.png'); //changer le sprite
                 }
                 if ((this._state === StudentState.MovingToDesk || this._state === StudentState.MovingToDeskTouched) && (this._gridPos.x === destination.x && this._gridPos.y === destination.y)) { // Si état = MovingToDesk, et si le student est sur son desk, state devient idle
                     this._state = StudentState.Idle;
-                    this.changeSprite('../../src/assets/student.png'); //changer le sprite
+                    this.changeSprite('../../src/assets/gnome-m-red_hat-SWEN.png'); //changer le sprite
                 }
         }
         }
@@ -152,9 +152,27 @@ export class Student extends Agent {
         this._desk = desk;
     }
 
-    changeSprite(newTexture) {
-        PIXI.Assets.load(newTexture).then((texture) => {
-            this._sprite.texture = texture;
+    changeSprite(spriteSheet) {
+        PIXI.Assets.load(spriteSheet).then((texture) => {
+            const frameWidth = 13; // Width of each frame in the sprite sheet
+            const frameHeight = 21; // Height of each frame in the sprite sheet
+            const textures = [];
+
+            for (let i = 0; i < texture.width / frameWidth; i++) {
+                const frame = new PIXI.Texture(texture, new PIXI.Rectangle(i * frameWidth, 0, frameWidth, frameHeight));
+                textures.push(frame);
+            }
+
+            if (this._sprite instanceof PIXI.AnimatedSprite) {
+                this._sprite.textures = textures;
+                this._sprite.play();
+            } else {
+                this._sprite = new PIXI.AnimatedSprite(textures);
+                this._sprite.animationSpeed = 0.1; // Adjust the animation speed as needed
+                this._sprite.anchor.set(0.5, 1); // Set the anchor point as needed
+                this._sprite.play();
+                this._app.stage.addChild(this._sprite);
+            }
         });
     }
 
