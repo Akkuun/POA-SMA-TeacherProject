@@ -1,5 +1,5 @@
 import {Agent} from './Agent';
-import {WindowHeight, WindowWidth} from './Global';
+import {WindowHeight, WindowWidth, SHOWPATH} from './Global';
 import Graph from "./Graph.js";
 import * as PIXI from "pixi.js";
 import {ClassroomState} from "./Classroom.jsx";
@@ -12,12 +12,38 @@ export const StudentState = {
     MovingToDeskTouched: "MovingToDeskTouched"
 }
 
+export const WantCandyStrategies = {
+    Probability: function() {
+        return Math.random() < 0.002; // 1 agent : p = 0.1, 5 agents : p = 0.01, 20 agents : p = 0.002
+    },
+    WhenTeacherIsFarBehind: function() {
+        for (let teacher of this._classroom._teachers) {
+            if (teacher._gridPos.x > 5) {
+                return false;
+            }
+        }
+        return true;
+    },
+    WhenAnotherStudentStartsMoving: function() {
+        for (let student of this._classroom._students) {
+            if (student._state === StudentState.MovingToCandy || student._state === StudentState.MovingToDesk) {
+                return true;
+            }
+        }
+        return false;
+    },
+    Every50Frames: function() {
+        return this._app.ticker.lastTime % 5000 <= 100;
+    }
+}
+
 export class Student extends Agent {
     _state;
     _desk;
     _candies;
     _sprite;
     _positions;
+    _wantCandyStrategy;
 
     constructor(p_app, p_classroom) {
         super(p_app, p_classroom);
@@ -26,6 +52,8 @@ export class Student extends Agent {
         this._state = StudentState.StartAnimation;
         this._candies = 0;
         this._positions = [];
+        let keys = Object.keys(WantCandyStrategies);
+        this._wantCandyStrategy = WantCandyStrategies[keys[keys.length * Math.random() << 0]];
     }
 
     changeState(status) {
@@ -35,14 +63,6 @@ export class Student extends Agent {
     performAgentAction(action) {
         this.move(action);
     }
-
-    doIWannaCandy() {
-        /*
-        loi binomiale de param p=0,002 n=30  1 etu toutes les 3 secondes
-         */
-        return Math.random() < 0.002; // 1 agent : p = 0.1, 5 agents : p = 0.01, 20 agents : p = 0.002
-    }
-
 
     choseAgentAction() {
         let destination;
@@ -57,7 +77,7 @@ export class Student extends Agent {
              // Calcule la route (pathfinding) pour aller à la destination
              try {
                 let path = graph.A_star(this._gridPos, destination);
-                graph.drawPath(path, this._app);
+                if(SHOWPATH) graph.drawPath(path, this._app);
                 // Fait le prochainpath[1] mouvementpath[1]
                 let action = this.getNextDirection(this._gridPos, path[1]);
                 this.performAgentAction(action);
@@ -69,7 +89,7 @@ export class Student extends Agent {
     
             // Si état = idle, return
             if (this._state === StudentState.Idle) {
-                if (this.doIWannaCandy()) {
+                if (this._wantCandyStrategy()) {
                     this._state = StudentState.MovingToCandy;
                 }
             } else {
@@ -84,7 +104,7 @@ export class Student extends Agent {
                 // Calcule la route (pathfinding) pour aller à la destination
                 try {
                     let path = graph.A_star(this._gridPos, destination);
-                    graph.drawPath(path, this._app);
+                    if(SHOWPATH) graph.drawPath(path, this._app);
                     // Fait le prochainpath[1] mouvementpath[1]
                     let action = this.getNextDirection(this._gridPos, path[1]);
                     this.performAgentAction(action);

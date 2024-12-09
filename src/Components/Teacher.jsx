@@ -1,5 +1,5 @@
 import {Agent} from './Agent';
-import {WindowHeight, WindowWidth} from "./Global.jsx";
+import {WindowHeight, WindowWidth, SHOWPATH} from "./Global.jsx";
 import Graph from "./Graph.js";
 import {StudentState} from "./Student.jsx";
 import {ClassroomState} from "./Classroom.jsx";
@@ -106,8 +106,10 @@ export class Teacher extends Agent {
     }
 
     displayDebugPatrouille() {
-        for (let point of this._patrolPoints) {
-            this._classroom.displayDebugGridCell(point);
+        if (SHOWPATH) {
+            for (let point of this._patrolPoints) {
+                this._classroom.displayDebugGridCell(point);
+            }
         }
     }
 }
