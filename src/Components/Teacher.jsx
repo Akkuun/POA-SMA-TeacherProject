@@ -10,6 +10,27 @@ export const TeacherState = {
     MovingToStudent: "MovingToStudent",
 }
 
+// Each TeacherPathStrategy must return a {destination: {int x,int y}, targetStudent: Student s} object
+export const TeacherPathStrategy = {
+    // Chemin le plus court
+    ShortestPath: function() {
+        let destination = null;
+        let targetStudent = this._choseStudentStrategy();
+        if (targetStudent === null) this._state = TeacherState.Patrolling; // Si il n'y a pas de student en mouvement, state devient Patrolling
+        // Si état = Patrolling, destination = prochain point de patrouille
+        if (this._state === TeacherState.Patrolling) {
+            destination = this.getPatrolPoint();
+        // console.log("Point de patrouille : ", destination);
+        }
+        if (this._state === TeacherState.MovingToStudent) {
+            destination = targetStudent._gridPos;
+            //console.log("Closest student position", destination);
+        }
+        return {destination: destination, targetStudent: targetStudent};
+    },
+}
+
+
 export const ChoseStudentStrategy = {
     // Le Student le plus proche à l'instant t
     ClosestStudent: function() {
@@ -47,6 +68,7 @@ export class Teacher extends Agent {
     _patrolStatus = 0;
     _choseStudentStrategy;
     _currentTarget = null;
+    _pathStrategy;
 
     constructor(p_app, p_classroom) {
         super(p_app, p_classroom);
@@ -54,6 +76,7 @@ export class Teacher extends Agent {
         this._width = 25 / 545 * WindowWidth * 0.6;
         this._height = 24 / 405 * WindowHeight * 50 / 40;
         this.setChoseStudentStrategy(ChoseStudentStrategy.ClosestStudentFocused);
+        this.setPathStrategy(TeacherPathStrategy.ShortestPath);
     }
 
     performAgentAction(action) {
@@ -62,6 +85,10 @@ export class Teacher extends Agent {
 
     setChoseStudentStrategy(strategy) {
         this._choseStudentStrategy = strategy;
+    }
+
+    setPathStrategy(strategy) {
+        this._pathStrategy = strategy;
     }
 
     choseAgentAction() {
@@ -77,17 +104,9 @@ export class Teacher extends Agent {
             }
         } else {
             // Si il existe un student qui est à l'était moving to candy ou moving to desk, state devient MovingToStudent et on récupère le student le plus proche
-            targetStudent = this._choseStudentStrategy();
-            if (targetStudent === null) this._state = TeacherState.Patrolling; // Si il n'y a pas de student en mouvement, state devient Patrolling
-            // Si état = Patrolling, destination = prochain point de patrouille
-            if (this._state === TeacherState.Patrolling) {
-                destination = this.getPatrolPoint();
-               // console.log("Point de patrouille : ", destination);
-            }
-            if (this._state === TeacherState.MovingToStudent) {
-                destination = targetStudent._gridPos;
-                //console.log("Closest student position", destination);
-            }
+            let strategyResult = this._pathStrategy();
+            destination = strategyResult.destination;
+            targetStudent = strategyResult.targetStudent;            
         }
         // Calcule la route (pathfinding) pour aller à la destination
         let graph = new Graph(this._classroom._grid, this._gridPos, destination);
