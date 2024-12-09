@@ -1,5 +1,4 @@
-import {classroom_nrows, classroom_ncols, GridCellCenterForDisplay} from './Classroom';
-import Graph from "./Graph.js";
+import {classroom_ncols, classroom_nrows, GridCellCenterForDisplay} from './Classroom';
 
 export const Action = {
     Up: 'Up',
@@ -19,7 +18,7 @@ export class Agent {
         this._classroom = p_classroom;
     }
 
-    // Computes the display position of the student's sprite from its model position
+    // Computes the display position of the student's sprite from its model  position
     display() {
         if (this._sprite) {
             let coords = GridCellCenterForDisplay(this._gridPos.x, this._gridPos.y);
@@ -44,34 +43,24 @@ export class Agent {
         this._sprite = sprite;
     }
 
-
-
-
-    //function that find the path to the destination
-    //using the A* algorithm
-    findPath(Destination) {
-        let c = this._classroom;
-        // draw the grid for debug
-        //display the destination
-        this._classroom.displayDebugGridCell(Destination);
-
-
-        // let graph = new Graph(c._grid).graph;
-        // graph.test();
-
-
-
-        //c.displayDebugGridCellIJ(2, 3); //
-
-
-        // this._classroom.displayDebugGridCell(graph[100]);
-        // this._classroom.displayDebugGridCellNeighbors(graph[100])
-
-        // let path = this.A_star(this._gridPos, Destination, graph);
-        // console.log(path);
-
+    getNextDirection(current, next) {
+        next = {x: next.y, y: next.x};
+        if (next.x > current.x) {
+            return Action.Right;
+        } else if (next.x < current.x) {
+            return Action.Left;
+        } else if (next.y > current.y) {
+            return Action.Down;
+        } else if (next.y < current.y) {
+            return Action.Up;
+        }
     }
 
+
+    // function that return true if the agent is on a cell adjacent to the destination
+    oneOf(gridPosA, gridPosB) {
+        return (Math.abs(gridPosA.x - gridPosB.x) + Math.abs(gridPosA.y - gridPosB.y) === 1);
+    }
 
     move(action) {
         let oldPos = this._gridPos;

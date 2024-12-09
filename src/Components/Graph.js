@@ -1,4 +1,3 @@
-
 import * as PIXI from 'pixi.js';
 import {cellUnit, GridCellCenterForDisplay, GridCoordsToDisplayCoords} from "./Classroom.jsx";
 import {DownVector, RightVector} from "./Global.jsx";
@@ -16,10 +15,12 @@ class Node {
 }
 
 class Graph {
-    constructor(grid) {
+    constructor(grid, start, destination) {
         this.grid = grid;
         this.ncols = grid.length;
         this.nrows = grid[0].length;
+        this.start = start;
+        this.destination = destination;
         this.nodes = this.createGraphFromGrid();
     }
 
@@ -27,10 +28,10 @@ class Graph {
         const nodes = {};
 
         // Create nodes for all valid grid positions
-        for (let i = 0; i < this.ncols; i++) {
-            for (let j = 0; j < this.nrows; j++) {
-                if (this.grid[i][j] !== 2 && this.grid[i][j] !== "student") {
-                    nodes[`${i},${j}`] = new Node(i, j);
+        for (let i = 1; i < this.ncols; i++) {
+            for (let j = 1; j < this.nrows; j++) {
+                if (this.grid[i][j] === 0 || (i == this.start.y && j == this.start.x) || this.destination != null && (i == this.destination.y && j == this.destination.x)) { // si la case de destination est un student , on le met quand même dans le graph en tant que node valide
+                    nodes[`${j},${i}`] = new Node(j, i);
                 }
             }
         }
@@ -60,14 +61,15 @@ class Graph {
 
     displayGraph() {
         for (let key in this.nodes) {
-            console.log(
+            /*console.log(
                 `Node ${key} -> Neighbors:`,
                 this.nodes[key].neighbors.map(neighbor => `${neighbor.x},${neighbor.y}`)
-            );
+            );*/
         }
     }
+
     displayCells(app) {
-        for (let key in this.nodes){
+        for (let key in this.nodes) {
             let node = this.nodes[key];
             let i = node.x;
             let j = node.y;
@@ -102,8 +104,16 @@ class Graph {
         return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
     }
 
+    reverseXYOnPath(path) {
+        let newPath = [];
+        for (let cell of path) {
+            newPath.push({x: cell.y, y: cell.x});
+        }
+        return newPath;
+    }
+
     A_star(start, destination) {
-        const startNode = this.nodes[`${start.x},${start.y}`];
+        let startNode = this.nodes[`${start.x},${start.y}`];
         const destinationNode = this.nodes[`${destination.x},${destination.y}`];
         if (!startNode || !destinationNode) {
             console.error("Start or destination node is invalid.");
@@ -111,6 +121,7 @@ class Graph {
             console.log("Destination Node:", destinationNode);
             return [];
         }
+
 
         let openSet = new Set([startNode]);
         let cameFrom = new Map();
@@ -130,6 +141,7 @@ class Graph {
                     path.push({x: current.x, y: current.y});
                     current = cameFrom.get(current);
                 }
+                path = this.reverseXYOnPath(path); // ON INVERSE TOUT AHAHAHAHAH
                 return path.reverse();
             }
 
@@ -154,14 +166,16 @@ class Graph {
         return [];
     }
 
+    //draw the start and destination cells in a different color
     drawPath(path, app) {
         for (let cell of path) {
-            console.log(cell);
+            //console.log(cell);
             let i = cell.x;
             let j = cell.y;
 
             let graphics = new PIXI.Graphics();
             let coords = GridCoordsToDisplayCoords(j, i);
+
             let points = [
                 new PIXI.Point(coords.x, coords.y),
                 new PIXI.Point(coords.x + cellUnit.x * RightVector.x, coords.y + cellUnit.x * RightVector.y),
@@ -170,14 +184,27 @@ class Graph {
             ];
             let cellDisplay = new PIXI.Polygon(points);
 
-            // Draw the border of the cell
-            graphics.lineStyle(1, 0x000000, 1);
-            graphics.beginFill(0xFFFFFF);
+            if (cell === path[0] || cell === path[path.length - 1]) {
+                graphics.lineStyle(1, 0x0FF000, 1);
+            } else {
+
+                // Draw the border of the cell
+                graphics.lineStyle(1, 0x000000, 1);
+            }
+            if (cell === path[0] || cell === path[path.length - 1]) {
+                graphics.beginFill(0xF0FF00);
+            } else {
+                graphics.beginFill(0xFFFFFF);
+
+            }
             graphics.drawPolygon(cellDisplay);
             graphics.endFill();
 
             // Display a dot in the center of the cell
             let dot = GridCellCenterForDisplay(j, i);
+            if (cell === path[0] || cell === path[path.length - 1]) {
+                graphics.beginFill(0xF0FF00);
+            }
             graphics.beginFill(0x0000FF);
             graphics.drawCircle(dot.x, dot.y, 3);
             graphics.endFill();
