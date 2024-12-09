@@ -10,17 +10,50 @@ export const TeacherState = {
     MovingToStudent: "MovingToStudent",
 }
 
+export const ChoseStudentStrategy = {
+    // Le Student le plus proche à l'instant t
+    ClosestStudent: function() {
+        let targetStudent = null;
+        for (let student of this._classroom._students) {
+            if (student._state === StudentState.MovingToCandy || student._state === StudentState.MovingToDesk) {
+                this._state = TeacherState.MovingToStudent;
+                if (targetStudent === null) targetStudent = student;
+                else {
+                    if (Math.abs(this._gridPos.x - student._gridPos.x) + Math.abs(this._gridPos.y - student._gridPos.y) < Math.abs(this._gridPos.x - targetStudent._gridPos.x) + Math.abs(this._gridPos.y - targetStudent._gridPos.y)) {
+                        targetStudent = student;
+                    }
+
+                }
+            }
+        }
+        return targetStudent;
+    },
+    // Le student le plus proche à l'instant t puis focus sur le même jusqu'à ce qu'il soit touché ou retourné à sa place
+    ClosestStudentWithoutChanging: function() {
+        if (this._currentTarget !== null && (this._currentTarget._state === StudentState.MovingToCandy || this._currentTarget._state === StudentState.MovingToDesk)) {
+            return this._currentTarget;
+        } else {
+            this._currentTarget = null;
+        }
+        this._currentTarget = ChoseStudentStrategy.ClosestStudent.bind(this)();
+        return this._currentTarget;
+    },
+}
+
 export class Teacher extends Agent {
     _state;
     _desk;
     _patrolPoints = [{x: 1, y: 1}, {x: 30, y: 25}];
     _patrolStatus = 0;
+    _choseStudentStrategy;
+    _currentTarget = null;
 
     constructor(p_app, p_classroom) {
         super(p_app, p_classroom);
         this._state = TeacherState.StartAnimation;
         this._width = 25 / 545 * WindowWidth * 0.6;
         this._height = 24 / 405 * WindowHeight * 50 / 40;
+        this._choseStudentStrategy = ChoseStudentStrategy.ClosestStudentWithoutChanging;
     }
 
     performAgentAction(action) {
@@ -30,7 +63,7 @@ export class Teacher extends Agent {
     choseAgentAction() {
         let start = this._gridPos;
         let destination = null;
-        let closestStudent = null;
+        let targetStudent = null;
         if (this._classroom._state === ClassroomState.StartAnimation) {
             // Si état = StartAnimation, destination = position de départ
             destination = {x:this._desk._coordGrid.x+1, y:this._desk._coordGrid.y};
@@ -40,26 +73,15 @@ export class Teacher extends Agent {
             }
         } else {
             // Si il existe un student qui est à l'était moving to candy ou moving to desk, state devient MovingToStudent et on récupère le student le plus proche
-            for (let student of this._classroom._students) {
-                if (student._state === "MovingToCandy" || student._state === "MovingToDesk") {
-                    this._state = TeacherState.MovingToStudent;
-                    if (closestStudent === null) closestStudent = student;
-                    else {
-                        if (Math.abs(start.x - student._gridPos.x) + Math.abs(start.y - student._gridPos.y) < Math.abs(start.x - closestStudent._gridPos.x) + Math.abs(start.y - closestStudent._gridPos.y)) {
-                            closestStudent = student;
-                        }
-
-                    }
-                }
-            }
-            if (closestStudent === null) this._state = TeacherState.Patrolling; // Si il n'y a pas de student en mouvement, state devient Patrolling
+            targetStudent = this._choseStudentStrategy();
+            if (targetStudent === null) this._state = TeacherState.Patrolling; // Si il n'y a pas de student en mouvement, state devient Patrolling
             // Si état = Patrolling, destination = prochain point de patrouille
             if (this._state === TeacherState.Patrolling) {
                 destination = this.getPatrolPoint();
                // console.log("Point de patrouille : ", destination);
             }
             if (this._state === TeacherState.MovingToStudent) {
-                destination = closestStudent._gridPos;
+                destination = targetStudent._gridPos;
                 //console.log("Closest student position", destination);
             }
         }
@@ -76,11 +98,11 @@ export class Teacher extends Agent {
         }
 
         if (this._state === TeacherState.MovingToStudent && this.oneOf(this._gridPos, destination)) {
-            if (closestStudent._state === StudentState.MovingToDesk){
-                closestStudent._candies--;
-                closestStudent.changeSprite('../../src/assets/student.png');
+            if (targetStudent._state === StudentState.MovingToDesk){
+                targetStudent._candies--;
+                targetStudent.changeSprite('../../src/assets/student.png');
             }// Teacher récupère le bonbon que le student a pris
-            closestStudent.changeState(StudentState.MovingToDeskTouched);
+            targetStudent.changeState(StudentState.MovingToDeskTouched);
             this._state = TeacherState.Patrolling;
 
 

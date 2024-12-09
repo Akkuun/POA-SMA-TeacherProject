@@ -16,6 +16,7 @@ export const WantCandyStrategies = {
     Probability: function() {
         return Math.random() < 0.002; // 1 agent : p = 0.1, 5 agents : p = 0.01, 20 agents : p = 0.002
     },
+    // Quand le teacher est loin derrière
     WhenTeacherIsFarBehind: function() {
         for (let teacher of this._classroom._teachers) {
             if (teacher._gridPos.x > 5) {
@@ -24,6 +25,7 @@ export const WantCandyStrategies = {
         }
         return true;
     },
+    // Quand un autre student commence à bouger
     WhenAnotherStudentStartsMoving: function() {
         for (let student of this._classroom._students) {
             if (student._state === StudentState.MovingToCandy || student._state === StudentState.MovingToDesk) {
@@ -32,7 +34,8 @@ export const WantCandyStrategies = {
         }
         return false;
     },
-    Every50Frames: function() {
+    // Toutes les 5 secondes
+    Every5Seconds: function() {
         return this._app.ticker.lastTime % 5000 <= 100;
     }
 }
