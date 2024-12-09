@@ -12,6 +12,18 @@ export const StudentState = {
     MovingToDeskTouched: "MovingToDeskTouched"
 }
 
+export const StudentPathStrategy = {
+    // Chemin le plus court
+    ShortestPath: function() {
+        if (this._state === StudentState.MovingToCandy) {
+            return this._classroom._candy; //destination
+
+        } else if (this._state === StudentState.MovingToDesk || this._state === StudentState.MovingToDeskTouched) {    // Si état = MovingToDesk, destination = son desk
+            return this._desk._coordGrid; //destination
+        }
+    },
+}
+
 export const WantCandyStrategies = {
     Probability: function() {
         return Math.random() < 0.002; // 1 agent : p = 0.1, 5 agents : p = 0.01, 20 agents : p = 0.002
@@ -47,6 +59,8 @@ export class Student extends Agent {
     _sprite;
     _positions;
     _wantCandyStrategy;
+    _pathStrategy;
+    __movingStrategyData;
 
     constructor(p_app, p_classroom) {
         super(p_app, p_classroom);
@@ -57,6 +71,7 @@ export class Student extends Agent {
         this._positions = [];
         let keys = Object.keys(WantCandyStrategies);
         this.setWantCandyStrategy(WantCandyStrategies[keys[Math.floor(Math.random() * keys.length)]]);
+        this.setPathStrategy(StudentPathStrategy.ShortestPath);
     }
 
     changeState(status) {
@@ -69,6 +84,10 @@ export class Student extends Agent {
 
     setWantCandyStrategy(strategy) {
         this._wantCandyStrategy = strategy;
+    }
+
+    setPathStrategy(strategy) {
+        this._pathStrategy = strategy;
     }
 
     choseAgentAction() {
@@ -93,7 +112,7 @@ export class Student extends Agent {
             }
         } else {
             // Condition qui dit si le student veut un bonbon. Si il veut un bonbon, state devient MovingToCandy
-    
+            destination = this._pathStrategy();
             // Si état = idle, return
             if (this._state === StudentState.Idle) {
                 if (this._wantCandyStrategy()) {
@@ -102,12 +121,7 @@ export class Student extends Agent {
             } else {
                 // Sinon
                 // Si état = MovingToCandy, destination = bonbon le plus proche
-                if (this._state === StudentState.MovingToCandy) {
-                    destination = this._classroom._candy; //destination
-    
-                } else if (this._state === StudentState.MovingToDesk || this._state === StudentState.MovingToDeskTouched) {    // Si état = MovingToDesk, destination = son desk
-                    destination = this._desk._coordGrid; //destination
-                }
+                StudentPathStrategy.ShortestPath();
                 // Calcule la route (pathfinding) pour aller à la destination
                 try {
                     let path = graph.A_star(this._gridPos, destination);
