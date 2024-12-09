@@ -56,7 +56,7 @@ export class Student extends Agent {
         this._candies = 0;
         this._positions = [];
         let keys = Object.keys(WantCandyStrategies);
-        this._wantCandyStrategy = WantCandyStrategies[keys[keys.length * Math.random() << 0]];
+        this.setWantCandyStrategy(WantCandyStrategies[keys[Math.floor(Math.random() * keys.length)]]);
     }
 
     changeState(status) {
@@ -65,6 +65,10 @@ export class Student extends Agent {
 
     performAgentAction(action) {
         this.move(action);
+    }
+
+    setWantCandyStrategy(strategy) {
+        this._wantCandyStrategy = strategy;
     }
 
     choseAgentAction() {

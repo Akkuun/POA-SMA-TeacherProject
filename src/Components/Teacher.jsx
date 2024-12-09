@@ -29,7 +29,7 @@ export const ChoseStudentStrategy = {
         return targetStudent;
     },
     // Le student le plus proche à l'instant t puis focus sur le même jusqu'à ce qu'il soit touché ou retourné à sa place
-    ClosestStudentWithoutChanging: function() {
+    ClosestStudentFocused: function() {
         if (this._currentTarget !== null && (this._currentTarget._state === StudentState.MovingToCandy || this._currentTarget._state === StudentState.MovingToDesk)) {
             return this._currentTarget;
         } else {
@@ -53,11 +53,15 @@ export class Teacher extends Agent {
         this._state = TeacherState.StartAnimation;
         this._width = 25 / 545 * WindowWidth * 0.6;
         this._height = 24 / 405 * WindowHeight * 50 / 40;
-        this._choseStudentStrategy = ChoseStudentStrategy.ClosestStudentWithoutChanging;
+        this.setChoseStudentStrategy(ChoseStudentStrategy.ClosestStudentFocused);
     }
 
     performAgentAction(action) {
         this.move(action);
+    }
+
+    setChoseStudentStrategy(strategy) {
+        this._choseStudentStrategy = strategy;
     }
 
     choseAgentAction() {
