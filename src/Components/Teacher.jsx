@@ -84,11 +84,21 @@ export class Teacher extends Agent {
     }
 
     setChoseStudentStrategy(strategy) {
-        this._choseStudentStrategy = strategy;
+        if (strategy instanceof Function) {
+            this._choseStudentStrategy = strategy;
+        } else {
+            // if strategy is a string, get the function from the object
+            if (ChoseStudentStrategy[strategy]) this._choseStudentStrategy = ChoseStudentStrategy[strategy];
+        }
     }
 
     setPathStrategy(strategy) {
-        this._pathStrategy = strategy;
+        if (strategy instanceof Function) {
+            this._pathStrategy = strategy;
+        } else {
+            // if strategy is a string, get the function from the object
+            if (TeacherPathStrategy[strategy]) this._pathStrategy = TeacherPathStrategy[strategy];
+        }
     }
 
     choseAgentAction() {

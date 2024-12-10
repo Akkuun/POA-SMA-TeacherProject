@@ -44,7 +44,7 @@ export const WantCandyStrategies = {
                 return true;
             }
         }
-        return false;
+        return WantCandyStrategies.Probability();
     },
     // Toutes les 5 secondes
     Every5Seconds: function() {
@@ -93,11 +93,26 @@ export class Student extends Agent {
     }
 
     setWantCandyStrategy(strategy) {
-        this._wantCandyStrategy = strategy;
+        if (strategy === "Random") {
+            let keys = Object.keys(WantCandyStrategies);
+            this._wantCandyStrategy = WantCandyStrategies[keys[Math.floor(Math.random() * keys.length)]];
+            return;
+        }
+        if (strategy instanceof Function) {
+            this._wantCandyStrategy = strategy;
+        } else {
+            // if strategy is a string, get the function from the object
+            if (WantCandyStrategies[strategy]) this._wantCandyStrategy = WantCandyStrategies[strategy];
+        }
     }
 
     setPathStrategy(strategy) {
-        this._pathStrategy = strategy;
+        if (strategy instanceof Function) {
+            this._pathStrategy = strategy;
+        } else {
+            // if strategy is a string, get the function from the object
+            if (StudentPathStrategy[strategy]) this._pathStrategy = StudentPathStrategy[strategy];
+        }
     }
 
     choseAgentAction() {
