@@ -1,8 +1,8 @@
 import {Agent} from './Agent';
-import {WindowHeight, WindowWidth, SHOWPATH} from './Global';
+import {WindowHeight, WindowWidth, SHOWPATH, DEBUG_INTRO} from './Global';
 import Graph from "./Graph.js";
 import * as PIXI from "pixi.js";
-import {ClassroomState} from "./Classroom.jsx";
+import {ClassroomState, classroom_nrows} from "./Classroom.jsx";
 
 export const StudentState = {
     StartAnimation: "StartAnimation",
@@ -12,6 +12,7 @@ export const StudentState = {
     MovingToDeskTouched: "MovingToDeskTouched"
 }
 
+// Path strategies, should return the destination as a {x, y} object
 export const StudentPathStrategy = {
     // Chemin le plus court
     ShortestPath: function() {
@@ -22,8 +23,34 @@ export const StudentPathStrategy = {
             return this._desk._coordGrid; //destination
         }
     },
+    // Chemin le plus long (tour de la classe)
+    LongestPath: function() {
+        if (this._state === StudentState.MovingToCandy) {
+            switch (this.__movingStrategyData["longestPath"]["subState"]) {
+                case 0: // before desk point
+                    if (this._gridPos.x === this.__movingStrategyData["longestPath"]["studentPoint"].x && this._gridPos.y === this.__movingStrategyData["longestPath"]["studentPoint"].y) {
+                        this.__movingStrategyData["longestPath"]["subState"] = 1;
+                        return this.__movingStrategyData["longestPath"]["candyPoint"];
+                    }
+                    return this.__movingStrategyData["longestPath"]["studentPoint"];
+                case 1: // after desk point
+                    if (this._gridPos.x === this.__movingStrategyData["longestPath"]["candyPoint"].x && this._gridPos.y === this.__movingStrategyData["longestPath"]["candyPoint"].y) {
+                        this.__movingStrategyData["longestPath"]["subState"] = 2;
+                        return this._classroom._candy;
+                    }
+                    return this.__movingStrategyData["longestPath"]["candyPoint"];
+                case 2: // after candy point
+                    return this._classroom._candy;
+            }
+
+        } else if (this._state === StudentState.MovingToDesk || this._state === StudentState.MovingToDeskTouched) {    // Si état = MovingToDesk, destination = son desk
+            this.__movingStrategyData["longestPath"]["subState"] = 0;
+            return this._desk._coordGrid; //destination
+        }
+    },
 }
 
+// Want candy strategies, should return a boolean
 export const WantCandyStrategies = {
     Probability: function() {
         return Math.random() < 0.002; // 1 agent : p = 0.1, 5 agents : p = 0.01, 20 agents : p = 0.002
@@ -40,7 +67,7 @@ export const WantCandyStrategies = {
     // Quand un autre student commence à bouger
     WhenAnotherStudentStartsMoving: function() {
         for (let student of this._classroom._students) {
-            if (student._state === StudentState.MovingToCandy || student._state === StudentState.MovingToDesk) {
+            if (student._state === StudentState.MovingToCandy && student.__framesSinceLastStartMovingToCandy === student._speed) {
                 return true;
             }
         }
@@ -63,6 +90,7 @@ export class Student extends Agent {
     _initSprite;
     _candySprite;
     __movingStrategyData;
+    __framesSinceLastStartMovingToCandy = 0;
 
     constructor(p_app, p_classroom) {
         super(p_app, p_classroom);
@@ -73,7 +101,7 @@ export class Student extends Agent {
         this._positions = [];
         let keys = Object.keys(WantCandyStrategies);
         this.setWantCandyStrategy(WantCandyStrategies[keys[Math.floor(Math.random() * keys.length)]]);
-        this.setPathStrategy(StudentPathStrategy.ShortestPath);
+        this.setPathStrategy(StudentPathStrategy.LongestPath);
     }
 
     setInitSprite(sprite) {
@@ -82,6 +110,16 @@ export class Student extends Agent {
 
     setCandySprite(sprite) {
         this._candySprite = sprite;
+    }
+
+    initializeStrategyData() {
+        // LongestPath data
+        this.__movingStrategyData = {};
+        this.__movingStrategyData["longestPath"] = {};
+        let longestPathY = (classroom_nrows - this._gridPos.y > this._gridPos.y) ? 1 : classroom_nrows - 2;
+        this.__movingStrategyData["longestPath"]["studentPoint"] = {x: this._gridPos.x, y: longestPathY};
+        this.__movingStrategyData["longestPath"]["candyPoint"] = {x: this._classroom._candy.x, y: longestPathY};
+        this.__movingStrategyData["longestPath"]["subState"] = 0;
     }
 
     changeState(status) {
@@ -122,13 +160,14 @@ export class Student extends Agent {
             // Si état = StartAnimation, destination = position de départ
             destination = this._desk._coordGrid;
             if (this._gridPos.x === destination.x && this._gridPos.y === destination.y) {
+                this.initializeStrategyData();
                 this._state = StudentState.Idle;
                 return;
             }
              // Calcule la route (pathfinding) pour aller à la destination
              try {
                 let path = graph.A_star(this._gridPos, destination);
-                if(SHOWPATH) graph.drawPath(path, this._app);
+                if(SHOWPATH && DEBUG_INTRO) graph.drawPath(path, this._app);
                 // Fait le prochainpath[1] mouvementpath[1]
                 let action = this.getNextDirection(this._gridPos, path[1]);
                 this.performAgentAction(action);
@@ -137,16 +176,18 @@ export class Student extends Agent {
             }
         } else {
             // Condition qui dit si le student veut un bonbon. Si il veut un bonbon, state devient MovingToCandy
-            destination = this._pathStrategy();
             // Si état = idle, return
             if (this._state === StudentState.Idle) {
                 if (this._wantCandyStrategy()) {
+                    this.__framesSinceLastStartMovingToCandy = 0;
                     this._state = StudentState.MovingToCandy;
                 }
             } else {
+                this.__framesSinceLastStartMovingToCandy++;
                 // Sinon
                 // Si état = MovingToCandy, destination = bonbon le plus proche
-                StudentPathStrategy.ShortestPath();
+                destination = this._pathStrategy();
+                console.log(destination, "state : ", this._state, "substate : ", this.__movingStrategyData["longestPath"]["subState"]);
                 // Calcule la route (pathfinding) pour aller à la destination
                 try {
                     let path = graph.A_star(this._gridPos, destination);
@@ -159,7 +200,7 @@ export class Student extends Agent {
                 }
     
                 // Si état = MovingToCandy, et si le student est sur une case adjacente au bonbon, state devient MovingToDesk et il a réussi à prendre le bonbon
-                if ((this._state === StudentState.MovingToCandy) && this.oneOf(this._gridPos, destination)) {
+                if ((this._state === StudentState.MovingToCandy) && this.oneOf(this._gridPos, this._classroom._candy)) {
                     this._state = StudentState.MovingToDesk;
                     this._candies++;
                     this.changeSprite(this._candySprite); //changer le sprite

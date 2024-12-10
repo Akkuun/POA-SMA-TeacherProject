@@ -172,8 +172,11 @@ class Graph {
             //console.log(cell);
             let i = cell.x;
             let j = cell.y;
-
-            let graphics = new PIXI.Graphics();
+            // remove old path
+            if (this._graphics) {
+                app.stage.removeChild(this._graphics);
+            }
+            this._graphics = new PIXI.Graphics();
             let coords = GridCoordsToDisplayCoords(j, i);
 
             let points = [
@@ -185,32 +188,32 @@ class Graph {
             let cellDisplay = new PIXI.Polygon(points);
 
             if (cell === path[0] || cell === path[path.length - 1]) {
-                graphics.lineStyle(1, 0x0FF000, 1);
+                this._graphics.lineStyle(1, 0x0FF000, 1);
             } else {
 
                 // Draw the border of the cell
-                graphics.lineStyle(1, 0x000000, 1);
+                this._graphics.lineStyle(1, 0x000000, 1);
             }
             if (cell === path[0] || cell === path[path.length - 1]) {
-                graphics.beginFill(0xF0FF00);
+                this._graphics.beginFill(0xF0FF00);
             } else {
-                graphics.beginFill(0xFFFFFF);
+                this._graphics.beginFill(0xFFFFFF);
 
             }
-            graphics.drawPolygon(cellDisplay);
-            graphics.endFill();
+            this._graphics.drawPolygon(cellDisplay);
+            this._graphics.endFill();
 
             // Display a dot in the center of the cell
             let dot = GridCellCenterForDisplay(j, i);
             if (cell === path[0] || cell === path[path.length - 1]) {
-                graphics.beginFill(0xF0FF00);
+                this._graphics.beginFill(0xF0FF00);
             }
-            graphics.beginFill(0x0000FF);
-            graphics.drawCircle(dot.x, dot.y, 3);
-            graphics.endFill();
+            this._graphics.beginFill(0x0000FF);
+            this._graphics.drawCircle(dot.x, dot.y, 3);
+            this._graphics.endFill();
 
-            graphics.zIndex = 3;
-            app.stage.addChild(graphics);
+            this._graphics.zIndex = 3;
+            app.stage.addChild(this._graphics);
         }
     }
 }
