@@ -1,4 +1,5 @@
 import React from 'react';
+import MapDark from '../../src/assets/map_dark.png';
 
 const MenuComponent = ({
                            startGame,
@@ -7,7 +8,16 @@ const MenuComponent = ({
                            studentNumber,
                            setStudentNumber,
                            setTeacherNumber,
-                           teacherNumber
+                           teacherNumber,
+                           studentSpeed,
+                           setStudentSpeed,
+                           teacherSpeed,
+                           setTeacherSpeed,
+
+                            studentCandyStrategy,
+                            setStudentCandyStrategy,
+                            teacherFocusStrategy,
+                            setTeacherFocusStrategy,
                        }) => {
 
 
@@ -16,7 +26,8 @@ const MenuComponent = ({
     }
 
     return (
-        <div>
+        // set background image and background size to cover and that div to take the whole screen and opacity of the background to 50%
+        <div id="menu" style={{backgroundImage: `url(${MapDark})`, width: '100vw', height: '100vh', backgroundSize: 'cover'}}>
             <h1>Menu</h1>
             <h2>Number of candy : {sweetNumber}</h2>
 
@@ -30,7 +41,25 @@ const MenuComponent = ({
             <button onClick={() => setTeacherNumber(clamp(teacherNumber - 1, 1, teacherNumber))}>Remove teacher
             </button>
             <button onClick={() => setTeacherNumber(teacherNumber + 1)}>Add teacher</button>
-
+            <h2>Student speed : {studentSpeed}</h2>
+            <button onClick={() => setStudentSpeed(clamp(studentSpeed - 1, 1, studentSpeed))}>Decrease speed</button>
+            <button onClick={() => setStudentSpeed(studentSpeed + 1)}>Increase speed</button>
+            <h2>Teacher speed : {teacherSpeed}</h2>
+            <button onClick={() => setTeacherSpeed(clamp(teacherSpeed - 1, 1, teacherSpeed))}>Decrease speed</button>
+            <button onClick={() => setTeacherSpeed(teacherSpeed + 1)}>Increase speed</button>
+            <h2>Student candy strategy</h2>
+            <select value={studentCandyStrategy} onChange={(e) => setStudentCandyStrategy(e.target.value)}>
+                <option value="Probability">Probability</option>
+                <option value="WhenTeacherIsFarBehind">When teacher is far behind</option>
+                <option value="WhenAnotherStudentStartsMoving">When another student starts moving</option>
+                <option value="Every5Seconds">Every 5 seconds</option>
+                <option value="Random">Random</option>
+            </select>
+            <h2>Teacher focus strategy</h2>
+            <select value={teacherFocusStrategy} onChange={(e) => setTeacherFocusStrategy(e.target.value)}>
+                <option value="ClosestStudent">Closest student</option>
+                <option value="ClosestStudentFocused">Closest student focused</option>
+            </select>
             <button onClick={startGame}>Launch game</button>
         </div>
     );
