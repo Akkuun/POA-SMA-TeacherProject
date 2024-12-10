@@ -165,8 +165,41 @@ export class Student extends Agent {
 
     changeSprite(newTexture) {
         PIXI.Assets.load(newTexture).then((texture) => {
-            this._sprite.texture = texture;
+            if (texture) {
+                if (this._sprite) {
+                    this._sprite.texture = texture;
+                } else {
+                    const studentSprite = new PIXI.Sprite(texture);
+                    studentSprite.zIndex = 11;
+                    studentSprite.width = this._width;
+                    studentSprite.height = this._height;
+                    studentSprite.anchor.set(0.5, 1);
+                    this._app.stage.addChild(studentSprite);
+                    this.setSprite(studentSprite);
+                }
+                this.display();
+            } else {
+                console.error('Texture is undefined.');
+            }
+        }).catch(error => {
+            console.error('Failed to load texture:', error);
         });
+    }
+
+    updateSpritesBasedOnStrategy() {
+        if (this._wantCandyStrategy.name === "WhenTeacherIsFarBehind") {
+            this.setInitSprite('../../src/assets/student_2.png');
+            this.setCandySprite('../../src/assets/student_2_candy.png');
+        } else if (this._wantCandyStrategy.name === "WhenAnotherStudentStartsMoving") {
+            this.setInitSprite('../../src/assets/student_3.png');
+            this.setCandySprite('../../src/assets/student_3_candy.png');
+        } else if (this._wantCandyStrategy.name === "Every5Seconds") {
+            this.setInitSprite('../../src/assets/student_6.png');
+            this.setCandySprite('../../src/assets/student_6_candy.png');
+        } else {
+            this.setInitSprite('../../src/assets/student_1.png');
+            this.setCandySprite('../../src/assets/student_1_candy.png');
+        }
     }
 
     getPosition() {

@@ -141,33 +141,7 @@ function displayClassroom(app, classroom) {
 
     // Charger et afficher les students
     for (let student of classroom._students) {
-        PIXI.Assets.load('../../src/assets/student_1.png').then((texture) => {
-            const studentSprite = new PIXI.Sprite(texture);
-            studentSprite.zIndex = 11;
-            studentSprite.width = student._width;
-            studentSprite.height = student._height;
-            studentSprite.anchor.set(0.5, 1); // Set the anchor point to the center of the sprite to (1, 0.5) for each Agent's sprite to center it on the middle of the cell
-            app.stage.addChild(studentSprite);
-            student.setSprite(studentSprite);
-            student.display();
-        });
-        if(student._wantCandyStrategy.name === "WhenTeacherIsFarBehind"){
-            console.log("change")
-            student.setInitSprite('../../src/assets/student_2.png');
-            student.setCandySprite('../../src/assets/student_2_candy.png');
-        }else if(student._wantCandyStrategy.name === "WhenAnotherStudentStartsMoving") {
-            console.log("uchange")
-            student.setInitSprite('../../src/assets/student_3.png');
-            student.setCandySprite('../../src/assets/student_3_candy.png');
-        }else if(student._wantCandyStrategy.name === "Every5Seconds") {
-            console.log("ichange")
-            student.setInitSprite('../../src/assets/student_6.png');
-            student.setCandySprite('../../src/assets/student_6_candy.png');
-        }else{
-            student.setInitSprite('../../src/assets/student_1.png');
-            student.setCandySprite('../../src/assets/student_1_candy.png');
-
-        }
+        student.updateSpritesBasedOnStrategy();
         student.changeSprite(student._initSprite);
     }
     for (let teacher of classroom._teachers) {
