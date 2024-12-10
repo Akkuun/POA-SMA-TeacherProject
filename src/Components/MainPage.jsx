@@ -44,7 +44,7 @@ function updateCandiesTakenText(candiesTakenText) {
     candiesTakenText.text = 'Candies taken: ' + nCandiesTaken;
 }
 
-function fillGridCell(nstudent, classroom, app, studentSpeed) {
+function fillGridCell(nstudent, classroom, app, studentSpeed, studentCandyStrategy) {
     while (deskCount < nstudent && (currentX <= endCol || currentY <= endRow)) { // while there are still desks to place and we haven't reached the end of the classroom
         if (currentY > endRow) {
             currentY = startRow;
@@ -58,6 +58,7 @@ function fillGridCell(nstudent, classroom, app, studentSpeed) {
             classroom.addStudent(new Student(app, classroom));
             // --------- Initialize the student's state from menu here
             classroom._students[classroom._students.length - 1]._speed = studentSpeed;
+            classroom._students[classroom._students.length - 1].setWantCandyStrategy(studentCandyStrategy);
             // ---------
             currentY += spacingY;
             deskCount++;
@@ -65,7 +66,7 @@ function fillGridCell(nstudent, classroom, app, studentSpeed) {
     }
 }
 
-function fillDeskInClassroom(nteacher, classroom, app, teacherSpeed) {
+function fillDeskInClassroom(nteacher, classroom, app, teacherSpeed, teacherFocusStrategy) {
     let deskCountTeacher = 0;
     let currentXTeacher = startColTeacher;
     let currentYTeacher = startRowTeacher;
@@ -90,6 +91,7 @@ function fillDeskInClassroom(nteacher, classroom, app, teacherSpeed) {
             classroom.addTeacher(new Teacher(app, classroom));
             // --------- Initialize the teacher's state from menu here
             classroom._teachers[classroom._teachers.length - 1]._speed = teacherSpeed;
+            classroom._teachers[classroom._teachers.length - 1].setChoseStudentStrategy(teacherFocusStrategy);
             // ---------
             currentYTeacher += spacingY;
             deskCountTeacher++;
@@ -188,7 +190,9 @@ function displayClassroom(app, classroom) {
 }
 
 // eslint-disable-next-line react/prop-types
-const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber, setTeacherNumber, teacherNumber, studentSpeed, setStudentSpeed, teacherSpeed, setTeacherSpeed}) => {
+const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber, setTeacherNumber, teacherNumber, studentSpeed, setStudentSpeed, teacherSpeed, setTeacherSpeed,
+    studentCandyStrategy, setStudentCandyStrategy, teacherFocusStrategy, setTeacherFocusStrategy
+}) => {
     const app = new PIXI.Application({
         width: window.innerWidth,  // Largeur de la fenêtre
         height: window.innerHeight, // Hauteur de la fenêtre
@@ -207,8 +211,8 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
     classroom._nstudents = nstudent;
     classroom._nteachers = nteacher;
 
-    fillGridCell(nstudent, classroom, app, studentSpeed);
-    fillDeskInClassroom(nteacher, classroom, app, teacherSpeed);
+    fillGridCell(nstudent, classroom, app, studentSpeed, studentCandyStrategy);
+    fillDeskInClassroom(nteacher, classroom, app, teacherSpeed, teacherFocusStrategy);
 
     displayClassroom(app, classroom);
 
