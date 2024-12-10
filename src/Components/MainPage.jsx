@@ -254,7 +254,6 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
             }
         }
         nCandiesTaken = 0;
-        classroom.getHeatmap();
         heatmap = classroom.getHeatMapObject();
         //console.log(heatmap);
         for (let i = 0; i < nstudent; i++) {
