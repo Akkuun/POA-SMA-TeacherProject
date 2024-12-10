@@ -199,7 +199,7 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
     root.appendChild(app.view);
 
     const classroom = new Classroom(app);
-    classroom.setCandy({x: 30, y: 10});
+    classroom.setCandy({x: 29, y: 14});
     const nstudent = studentNumber;
     const nteacher = teacherNumber;
     classroom._nstudents = nstudent;

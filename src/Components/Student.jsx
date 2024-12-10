@@ -89,8 +89,10 @@ export class Student extends Agent {
     _pathStrategy;
     _initSprite;
     _candySprite;
-    __movingStrategyData;
-    __framesSinceLastStartMovingToCandy = 0;
+
+    // Data for strategies
+    __movingStrategyData; 
+    __framesSinceLastStartMovingToCandy = 0; 
 
     constructor(p_app, p_classroom) {
         super(p_app, p_classroom);
