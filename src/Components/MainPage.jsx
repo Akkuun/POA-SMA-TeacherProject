@@ -149,16 +149,8 @@ function displayClassroom(app, classroom) {
 
     // Charger et afficher les students
     for (let student of classroom._students) {
-        PIXI.Assets.load('../../src/assets/student.png').then((texture) => {
-            const studentSprite = new PIXI.Sprite(texture);
-            studentSprite.zIndex = 11;
-            studentSprite.width = student._width;
-            studentSprite.height = student._height;
-            studentSprite.anchor.set(0.5, 1); // Set the anchor point to the center of the sprite to (1, 0.5) for each Agent's sprite to center it on the middle of the cell
-            app.stage.addChild(studentSprite);
-            student.setSprite(studentSprite);
-            student.display();
-        });
+        student.updateSpritesBasedOnStrategy();
+        student.changeSprite(student._initSprite);
     }
 
     for (let teacher of classroom._teachers) {

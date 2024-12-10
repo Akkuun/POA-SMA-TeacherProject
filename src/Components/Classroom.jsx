@@ -52,7 +52,6 @@ export class Classroom {
     _grid = []; // array that contains the grid of the classroom. Each cell can contain an agent or 0 if the cell is empty, or something else if the cell is occupied by something else
 
     _state;
-    _grid = []; // array that contains the grid of the classroom. Each cell can contain an agent or 0 if the cell is empty, or something else if the cell is occupied by something else (TODO)
     _heatmap = [];
 
     constructor(app) {

@@ -60,6 +60,8 @@ export class Student extends Agent {
     _positions;
     _wantCandyStrategy;
     _pathStrategy;
+    _initSprite;
+    _candySprite;
     __movingStrategyData;
 
     constructor(p_app, p_classroom) {
@@ -72,6 +74,14 @@ export class Student extends Agent {
         let keys = Object.keys(WantCandyStrategies);
         this.setWantCandyStrategy(WantCandyStrategies[keys[Math.floor(Math.random() * keys.length)]]);
         this.setPathStrategy(StudentPathStrategy.ShortestPath);
+    }
+
+    setInitSprite(sprite) {
+        this._initSprite = sprite;
+    }
+
+    setCandySprite(sprite) {
+        this._candySprite = sprite;
     }
 
     changeState(status) {
@@ -123,7 +133,7 @@ export class Student extends Agent {
                 let action = this.getNextDirection(this._gridPos, path[1]);
                 this.performAgentAction(action);
             } catch (e) {
-                console.log(e); // if the path is not found (no path to the destination, because blocked by another agent)
+                //console.log(e); // if the path is not found (no path to the destination, because blocked by another agent)
             }
         } else {
             // Condition qui dit si le student veut un bonbon. Si il veut un bonbon, state devient MovingToCandy
@@ -145,23 +155,24 @@ export class Student extends Agent {
                     let action = this.getNextDirection(this._gridPos, path[1]);
                     this.performAgentAction(action);
                 } catch (e) {
-                    console.log(e); // if the path is not found (no path to the destination, because blocked by another agent)
+                    //console.log(e); // if the path is not found (no path to the destination, because blocked by another agent)
                 }
     
                 // Si état = MovingToCandy, et si le student est sur une case adjacente au bonbon, state devient MovingToDesk et il a réussi à prendre le bonbon
                 if ((this._state === StudentState.MovingToCandy) && this.oneOf(this._gridPos, destination)) {
                     this._state = StudentState.MovingToDesk;
                     this._candies++;
-                    this.changeSprite('../../src/assets/student_candy.png'); //changer le sprite
+                    this.changeSprite(this._candySprite); //changer le sprite
                 }
                 if ((this._state === StudentState.MovingToDesk || this._state === StudentState.MovingToDeskTouched) && (this._gridPos.x === destination.x && this._gridPos.y === destination.y)) { // Si état = MovingToDesk, et si le student est sur son desk, state devient idle
                     this._state = StudentState.Idle;
-                    this.changeSprite('../../src/assets/student.png'); //changer le sprite
+                    this.changeSprite(this._initSprite); //changer le sprite
                 }
-        }
+            }
         }
 
     }
+
 
     setDesk(desk) {
         this._desk = desk;
@@ -169,8 +180,45 @@ export class Student extends Agent {
 
     changeSprite(newTexture) {
         PIXI.Assets.load(newTexture).then((texture) => {
-            this._sprite.texture = texture;
+            if (texture) {
+                if (this._sprite) {
+                    this._sprite.texture = texture;
+                } else {
+                    const studentSprite = new PIXI.Sprite(texture);
+                    studentSprite.zIndex = 11;
+                    studentSprite.width = this._width;
+                    studentSprite.height = this._height;
+                    studentSprite.anchor.set(0.5, 1);
+                    this._app.stage.addChild(studentSprite);
+                    this.setSprite(studentSprite);
+                }
+                this.display();
+            } else {
+                console.error('Texture is undefined.');
+            }
+        }).catch(error => {
+            console.error('Failed to load texture:', error);
         });
+    }
+
+    updateSpritesBasedOnStrategy() {
+        if (this._wantCandyStrategy.name === "WhenTeacherIsFarBehind") {
+            //console.log("WhenTeacherIsFarBehind");
+            this.setInitSprite('../../src/assets/student_2.png');
+            this.setCandySprite('../../src/assets/student_2_candy.png');
+        } else if (this._wantCandyStrategy.name === "WhenAnotherStudentStartsMoving") {
+            //console.log("WhenAnotherStudentStartsMoving");
+            this.setInitSprite('../../src/assets/student_3.png');
+            this.setCandySprite('../../src/assets/student_3_candy.png');
+        } else if (this._wantCandyStrategy.name === "Every5Seconds") {
+            //console.log("Every5Seconds");
+            this.setInitSprite('../../src/assets/student_6.png');
+            this.setCandySprite('../../src/assets/student_6_candy.png');
+        } else {
+            //console.log("Default");
+            this.setInitSprite('../../src/assets/student_1.png');
+            this.setCandySprite('../../src/assets/student_1_candy.png');
+        }
     }
 
     getPosition() {
