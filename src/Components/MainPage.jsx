@@ -160,6 +160,7 @@ function displayClassroom(app, classroom) {
             student.display();
         });
     }
+
     for (let teacher of classroom._teachers) {
         PIXI.Assets.load('../../src/assets/teacher.png').then((texture) => {
             const teacherSprite = new PIXI.Sprite(texture);
