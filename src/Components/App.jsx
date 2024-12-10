@@ -12,6 +12,7 @@ function App() {
     const [teacherSpeed, setTeacherSpeed] = useState(1);
     const [studentCandyStrategy, setStudentCandyStrategy] = useState("Probability");
     const [teacherFocusStrategy, setTeacherFocusStrategy] = useState("ClosestStudent");
+    const [studentPathStrategy, setStudentPathStrategy] = useState("ShortestPath");
 
     const startGame = () => {
         setGameStarted(true);
@@ -37,6 +38,8 @@ function App() {
                     setStudentCandyStrategy={setStudentCandyStrategy}
                     teacherFocusStrategy={teacherFocusStrategy}
                     setTeacherFocusStrategy={setTeacherFocusStrategy}
+                    studentPathStrategy={studentPathStrategy}
+                    setStudentPathStrategy={setStudentPathStrategy}
                 />
             ) : (
                 <MenuComponent
@@ -57,6 +60,8 @@ function App() {
                     setStudentCandyStrategy={setStudentCandyStrategy}
                     teacherFocusStrategy={teacherFocusStrategy}
                     setTeacherFocusStrategy={setTeacherFocusStrategy}
+                    studentPathStrategy={studentPathStrategy}
+                    setStudentPathStrategy={setStudentPathStrategy}
                 />
             )}
         </div>
