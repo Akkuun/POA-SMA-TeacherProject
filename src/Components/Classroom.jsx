@@ -157,6 +157,9 @@ export class Classroom {
         if (this._grid[oldPos.y][oldPos.x] === agent && this._grid[newPos.y][newPos.x] === 0) {
             this._grid[oldPos.y][oldPos.x] = 0;
             this._grid[newPos.y][newPos.x] = agent;
+            if (agent._state !== "StartAnimation" ) {
+                this._heatmap[newPos.y][newPos.x]++;
+            }
             return true;
         } else {
             return false;
@@ -342,15 +345,15 @@ export class Classroom {
 
     // on parcours toutes les cases, et si on trouve un student, on incrémente la case de 1
     getHeatmap() {
-        for (let i = 0; i < classroom_nrows; i++) {
-            for (let j = 0; j < classroom_ncols; j++) {
+        // for (let i = 0; i < classroom_nrows; i++) {
+        //     for (let j = 0; j < classroom_ncols; j++) {
 
-                // pour ne pas comtper les cases où les étudiants sont à leur bureau sans bouger ( ce qui fausserait la heatmap)
-                if (this._grid[i][j] instanceof Student && !(this._grid[i][j + 1] instanceof Desk) &&  !(this._grid[i][j]._state === "StartAnimation")) {
-                    this._heatmap[i][j]++;
-                }
-            }
-        }
+        //         // pour ne pas comtper les cases où les étudiants sont à leur bureau sans bouger ( ce qui fausserait la heatmap)
+        //         if (this._grid[i][j] instanceof Student && !(this._grid[i][j + 1] instanceof Desk) &&  !(this._grid[i][j]._state === "StartAnimation")) {
+        //             this._heatmap[i][j]++;
+        //         }
+        //     }
+        // }
     }
 
     displayHeatmap() {
