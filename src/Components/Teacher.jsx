@@ -123,7 +123,7 @@ export class Teacher extends Agent {
         if (this._state === TeacherState.MovingToStudent && this.oneOf(this._gridPos, destination)) {
             if (targetStudent._state === StudentState.MovingToDesk){
                 targetStudent._candies--;
-                targetStudent.changeSprite('../../src/assets/student.png');
+                targetStudent.changeSprite(targetStudent._initSprite);
             }// Teacher récupère le bonbon que le student a pris
             targetStudent.changeState(StudentState.MovingToDeskTouched);
             this._state = TeacherState.Patrolling;

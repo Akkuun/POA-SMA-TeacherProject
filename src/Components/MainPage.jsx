@@ -141,7 +141,7 @@ function displayClassroom(app, classroom) {
 
     // Charger et afficher les students
     for (let student of classroom._students) {
-        PIXI.Assets.load('../../src/assets/student.png').then((texture) => {
+        PIXI.Assets.load('../../src/assets/student_1.png').then((texture) => {
             const studentSprite = new PIXI.Sprite(texture);
             studentSprite.zIndex = 11;
             studentSprite.width = student._width;
@@ -153,19 +153,19 @@ function displayClassroom(app, classroom) {
         });
         if(student._wantCandyStrategy.name === "WhenTeacherIsFarBehind"){
             console.log("change")
-            student.setInitSprite('../../src/assets/jar_candy_empty.png');
-            student.setCandySprite('../../src/assets/jar_candy_full.png');
+            student.setInitSprite('../../src/assets/student_2.png');
+            student.setCandySprite('../../src/assets/student_2_candy.png');
         }else if(student._wantCandyStrategy.name === "WhenAnotherStudentStartsMoving") {
             console.log("uchange")
-            student.setInitSprite('../../src/assets/opened_door.png');
-            student.setCandySprite('../../src/assets/red_flower.png');
+            student.setInitSprite('../../src/assets/student_3.png');
+            student.setCandySprite('../../src/assets/student_3_candy.png');
         }else if(student._wantCandyStrategy.name === "Every5Seconds") {
             console.log("ichange")
-            student.setInitSprite('../../src/assets/student.png');
-            student.setCandySprite('../../src/assets/student_candy.png');
+            student.setInitSprite('../../src/assets/student_6.png');
+            student.setCandySprite('../../src/assets/student_6_candy.png');
         }else{
-            student.setInitSprite('../../src/assets/map.png');
-            student.setCandySprite('../../src/assets/student_desk.png');
+            student.setInitSprite('../../src/assets/student_1.png');
+            student.setCandySprite('../../src/assets/student_1_candy.png');
 
         }
         student.changeSprite(student._initSprite);

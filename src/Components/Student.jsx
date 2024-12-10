@@ -153,10 +153,11 @@ export class Student extends Agent {
                     this._state = StudentState.Idle;
                     this.changeSprite(this._initSprite); //changer le sprite
                 }
-        }
+            }
         }
 
     }
+
 
     setDesk(desk) {
         this._desk = desk;
