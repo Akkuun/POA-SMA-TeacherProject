@@ -151,6 +151,24 @@ function displayClassroom(app, classroom) {
             student.setSprite(studentSprite);
             student.display();
         });
+        if(student._wantCandyStrategy.name === "WhenTeacherIsFarBehind"){
+            console.log("change")
+            student.setInitSprite('../../src/assets/jar_candy_empty.png');
+            student.setCandySprite('../../src/assets/jar_candy_full.png');
+        }else if(student._wantCandyStrategy.name === "WhenAnotherStudentStartsMoving") {
+            console.log("uchange")
+            student.setInitSprite('../../src/assets/opened_door.png');
+            student.setCandySprite('../../src/assets/red_flower.png');
+        }else if(student._wantCandyStrategy.name === "Every5Seconds") {
+            console.log("ichange")
+            student.setInitSprite('../../src/assets/student.png');
+            student.setCandySprite('../../src/assets/student_candy.png');
+        }else{
+            student.setInitSprite('../../src/assets/map.png');
+            student.setCandySprite('../../src/assets/student_desk.png');
+
+        }
+        student.changeSprite(student._initSprite);
     }
     for (let teacher of classroom._teachers) {
         PIXI.Assets.load('../../src/assets/teacher.png').then((texture) => {

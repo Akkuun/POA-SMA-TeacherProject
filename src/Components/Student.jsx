@@ -60,6 +60,8 @@ export class Student extends Agent {
     _positions;
     _wantCandyStrategy;
     _pathStrategy;
+    _initSprite;
+    _candySprite;
     __movingStrategyData;
 
     constructor(p_app, p_classroom) {
@@ -72,6 +74,14 @@ export class Student extends Agent {
         let keys = Object.keys(WantCandyStrategies);
         this.setWantCandyStrategy(WantCandyStrategies[keys[Math.floor(Math.random() * keys.length)]]);
         this.setPathStrategy(StudentPathStrategy.ShortestPath);
+    }
+
+    setInitSprite(sprite) {
+        this._initSprite = sprite;
+    }
+
+    setCandySprite(sprite) {
+        this._candySprite = sprite;
     }
 
     changeState(status) {
@@ -108,7 +118,7 @@ export class Student extends Agent {
                 let action = this.getNextDirection(this._gridPos, path[1]);
                 this.performAgentAction(action);
             } catch (e) {
-                console.log(e); // if the path is not found (no path to the destination, because blocked by another agent)
+                //console.log(e); // if the path is not found (no path to the destination, because blocked by another agent)
             }
         } else {
             // Condition qui dit si le student veut un bonbon. Si il veut un bonbon, state devient MovingToCandy
@@ -130,18 +140,18 @@ export class Student extends Agent {
                     let action = this.getNextDirection(this._gridPos, path[1]);
                     this.performAgentAction(action);
                 } catch (e) {
-                    console.log(e); // if the path is not found (no path to the destination, because blocked by another agent)
+                    //console.log(e); // if the path is not found (no path to the destination, because blocked by another agent)
                 }
     
                 // Si état = MovingToCandy, et si le student est sur une case adjacente au bonbon, state devient MovingToDesk et il a réussi à prendre le bonbon
                 if ((this._state === StudentState.MovingToCandy) && this.oneOf(this._gridPos, destination)) {
                     this._state = StudentState.MovingToDesk;
                     this._candies++;
-                    this.changeSprite('../../src/assets/student_candy.png'); //changer le sprite
+                    this.changeSprite(this._candySprite); //changer le sprite
                 }
                 if ((this._state === StudentState.MovingToDesk || this._state === StudentState.MovingToDeskTouched) && (this._gridPos.x === destination.x && this._gridPos.y === destination.y)) { // Si état = MovingToDesk, et si le student est sur son desk, state devient idle
                     this._state = StudentState.Idle;
-                    this.changeSprite('../../src/assets/student.png'); //changer le sprite
+                    this.changeSprite(this._initSprite); //changer le sprite
                 }
         }
         }
