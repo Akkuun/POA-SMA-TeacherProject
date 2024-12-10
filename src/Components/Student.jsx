@@ -101,7 +101,7 @@ export class Student extends Agent {
         this._positions = [];
         let keys = Object.keys(WantCandyStrategies);
         this.setWantCandyStrategy(WantCandyStrategies[keys[Math.floor(Math.random() * keys.length)]]);
-        this.setPathStrategy(StudentPathStrategy.LongestPath);
+        this.setPathStrategy(StudentPathStrategy.ShortestPath);
     }
 
     setInitSprite(sprite) {
@@ -145,6 +145,11 @@ export class Student extends Agent {
     }
 
     setPathStrategy(strategy) {
+        if (strategy === "Random") {
+            let keys = Object.keys(StudentPathStrategy);
+            this._pathStrategy = StudentPathStrategy[keys[Math.floor(Math.random() * keys.length)]];
+            return;
+        }
         if (strategy instanceof Function) {
             this._pathStrategy = strategy;
         } else {
@@ -185,9 +190,8 @@ export class Student extends Agent {
             } else {
                 this.__framesSinceLastStartMovingToCandy++;
                 // Sinon
-                // Si état = MovingToCandy, destination = bonbon le plus proche
+                // Si état = MovingToCandy, destination = bonbon le plus proche si shortestPath, ou destination incluse dans le chemin différent du plus court (retournée par la stratégie)
                 destination = this._pathStrategy();
-                console.log(destination, "state : ", this._state, "substate : ", this.__movingStrategyData["longestPath"]["subState"]);
                 // Calcule la route (pathfinding) pour aller à la destination
                 try {
                     let path = graph.A_star(this._gridPos, destination);

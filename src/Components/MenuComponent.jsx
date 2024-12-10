@@ -18,6 +18,8 @@ const MenuComponent = ({
                            setStudentCandyStrategy,
                            teacherFocusStrategy,
                            setTeacherFocusStrategy,
+                           studentPathStrategy,
+                           setStudentPathStrategy
                        }) => {
 
     function clamp(value, min, max) {
@@ -56,6 +58,12 @@ const MenuComponent = ({
                         <option value="WhenTeacherIsFarBehind">When teacher is far behind</option>
                         <option value="WhenAnotherStudentStartsMoving">When another student starts moving</option>
                         <option value="Every5Seconds">Every 5 seconds</option>
+                        <option value="Random">Random</option>
+                    </select>
+                    <h2>Student path strategy</h2>
+                    <select value={studentPathStrategy} onChange={(e) => setStudentPathStrategy(e.target.value)}>
+                        <option value="ShortestPath">Shortest Path</option>
+                        <option value="LongestPath">Longest Path</option>
                         <option value="Random">Random</option>
                     </select>
                 </div>

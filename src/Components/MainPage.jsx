@@ -44,7 +44,7 @@ function updateCandiesTakenText(candiesTakenText) {
     candiesTakenText.text = 'Candies taken: ' + nCandiesTaken;
 }
 
-function fillGridCell(nstudent, classroom, app, studentSpeed, studentCandyStrategy) {
+function fillGridCell(nstudent, classroom, app, studentSpeed, studentCandyStrategy, studentPathStrategy) {
     while (deskCount < nstudent && (currentX <= endCol || currentY <= endRow)) { // while there are still desks to place and we haven't reached the end of the classroom
         if (currentY > endRow) {
             currentY = startRow;
@@ -59,6 +59,7 @@ function fillGridCell(nstudent, classroom, app, studentSpeed, studentCandyStrate
             // --------- Initialize the student's state from menu here
             classroom._students[classroom._students.length - 1]._speed = studentSpeed;
             classroom._students[classroom._students.length - 1].setWantCandyStrategy(studentCandyStrategy);
+            classroom._students[classroom._students.length - 1].setPathStrategy(studentPathStrategy);
             // ---------
             currentY += spacingY;
             deskCount++;
@@ -184,7 +185,7 @@ function displayClassroom(app, classroom) {
 
 // eslint-disable-next-line react/prop-types
 const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber, setTeacherNumber, teacherNumber, studentSpeed, setStudentSpeed, teacherSpeed, setTeacherSpeed,
-    studentCandyStrategy, setStudentCandyStrategy, teacherFocusStrategy, setTeacherFocusStrategy
+    studentCandyStrategy, setStudentCandyStrategy, teacherFocusStrategy, setTeacherFocusStrategy, studentPathStrategy, setStudentPathStrategy
 }) => {
     const app = new PIXI.Application({
         width: window.innerWidth,  // Largeur de la fenêtre
@@ -204,7 +205,7 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
     classroom._nstudents = nstudent;
     classroom._nteachers = nteacher;
 
-    fillGridCell(nstudent, classroom, app, studentSpeed, studentCandyStrategy);
+    fillGridCell(nstudent, classroom, app, studentSpeed, studentCandyStrategy, studentPathStrategy);
     fillDeskInClassroom(nteacher, classroom, app, teacherSpeed, teacherFocusStrategy);
 
     displayClassroom(app, classroom);
@@ -236,9 +237,7 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
 
     classroom.displayDesks(app);
     app.ticker.maxFPS = maxFPS;
-
     app.ticker.add(() => {
-
         if (classroom._state === "StartAnimation") {
             classroom.agentEnter();
             if (classroom._agentsWaitingToEnter.length === 0 && opened_door_sprite) {
