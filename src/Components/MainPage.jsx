@@ -44,7 +44,7 @@ function updateCandiesTakenText(candiesTakenText) {
     candiesTakenText.text = 'Candies taken: ' + nCandiesTaken;
 }
 
-function fillGridCell(nstudent, classroom, app) {
+function fillGridCell(nstudent, classroom, app, studentSpeed) {
     while (deskCount < nstudent && (currentX <= endCol || currentY <= endRow)) { // while there are still desks to place and we haven't reached the end of the classroom
         if (currentY > endRow) {
             currentY = startRow;
@@ -56,13 +56,16 @@ function fillGridCell(nstudent, classroom, app) {
         if (classroom._grid[currentY][currentX] === 0) {
             classroom.addDeskStudent(new Desk(currentX, currentY));
             classroom.addStudent(new Student(app, classroom));
+            // --------- Initialize the student's state from menu here
+            classroom._students[classroom._students.length - 1]._speed = studentSpeed;
+            // ---------
             currentY += spacingY;
             deskCount++;
         }
     }
 }
 
-function fillDeskInClassroom(nteacher, classroom, app) {
+function fillDeskInClassroom(nteacher, classroom, app, teacherSpeed) {
     let deskCountTeacher = 0;
     let currentXTeacher = startColTeacher;
     let currentYTeacher = startRowTeacher;
@@ -85,6 +88,9 @@ function fillDeskInClassroom(nteacher, classroom, app) {
         if (classroom._grid[currentYTeacher][currentXTeacher] === 0) {
             classroom.addDeskTeacher(new Desk(currentXTeacher, currentYTeacher));
             classroom.addTeacher(new Teacher(app, classroom));
+            // --------- Initialize the teacher's state from menu here
+            classroom._teachers[classroom._teachers.length - 1]._speed = teacherSpeed;
+            // ---------
             currentYTeacher += spacingY;
             deskCountTeacher++;
         }
@@ -182,7 +188,7 @@ function displayClassroom(app, classroom) {
 }
 
 // eslint-disable-next-line react/prop-types
-const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber, setTeacherNumber, teacherNumber}) => {
+const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber, setTeacherNumber, teacherNumber, studentSpeed, setStudentSpeed, teacherSpeed, setTeacherSpeed}) => {
     const app = new PIXI.Application({
         width: window.innerWidth,  // Largeur de la fenêtre
         height: window.innerHeight, // Hauteur de la fenêtre
@@ -201,8 +207,8 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
     classroom._nstudents = nstudent;
     classroom._nteachers = nteacher;
 
-    fillGridCell(nstudent, classroom, app);
-    fillDeskInClassroom(nteacher, classroom, app);
+    fillGridCell(nstudent, classroom, app, studentSpeed);
+    fillDeskInClassroom(nteacher, classroom, app, teacherSpeed);
 
     displayClassroom(app, classroom);
 
@@ -249,12 +255,16 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
         //console.log(heatmap);
         for (let i = 0; i < nstudent; i++) {
             let student = classroom._students[i];
-            student.choseAgentAction();
+            for (let actions = 0; actions < student._speed; actions++) {
+                student.choseAgentAction();
+            }
             nCandiesTaken += student._candies;
         }
         for (let i = 0; i < nteacher; i++) {
             let teacher = classroom._teachers[i];
-            teacher.choseAgentAction();
+            for (let actions = 0; actions < teacher._speed; actions++) {
+                teacher.choseAgentAction();
+            }
             teacher.displayDebugPatrouille();
         }
         updateCandiesTakenText(candiesTakenText);
