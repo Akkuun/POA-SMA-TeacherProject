@@ -7,7 +7,11 @@ const MenuComponent = ({
                            studentNumber,
                            setStudentNumber,
                            setTeacherNumber,
-                           teacherNumber
+                           teacherNumber,
+                           studentSpeed,
+                           setStudentSpeed,
+                           teacherSpeed,
+                            setTeacherSpeed 
                        }) => {
 
 
@@ -30,6 +34,12 @@ const MenuComponent = ({
             <button onClick={() => setTeacherNumber(clamp(teacherNumber - 1, 1, teacherNumber))}>Remove teacher
             </button>
             <button onClick={() => setTeacherNumber(teacherNumber + 1)}>Add teacher</button>
+            <h2>Student speed : {studentSpeed}</h2>
+            <button onClick={() => setStudentSpeed(clamp(studentSpeed - 1, 1, studentSpeed))}>Decrease speed</button>
+            <button onClick={() => setStudentSpeed(studentSpeed + 1)}>Increase speed</button>
+            <h2>Teacher speed : {teacherSpeed}</h2>
+            <button onClick={() => setTeacherSpeed(clamp(teacherSpeed - 1, 1, teacherSpeed))}>Decrease speed</button>
+            <button onClick={() => setTeacherSpeed(teacherSpeed + 1)}>Increase speed</button>
 
             <button onClick={startGame}>Launch game</button>
         </div>
