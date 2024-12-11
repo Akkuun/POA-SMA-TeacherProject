@@ -156,7 +156,7 @@ export class Classroom {
         if (this._grid[oldPos.y][oldPos.x] === agent && this._grid[newPos.y][newPos.x] === 0) {
             this._grid[oldPos.y][oldPos.x] = 0;
             this._grid[newPos.y][newPos.x] = agent;
-            if (agent._state !== "StartAnimation" ) {
+            if (agent._state !== "StartAnimation" && agent instanceof Student) {
                 this._heatmap[newPos.y][newPos.x]++;
             }
             return true;
