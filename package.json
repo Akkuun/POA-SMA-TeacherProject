@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://Akkuun.github.io/POA-SMA-TeacherProject",
+  "homepage": "https://akkuun.github.io/POA-SMA-TeacherProject",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
