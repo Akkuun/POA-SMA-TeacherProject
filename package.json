@@ -9,7 +9,8 @@
     "build": "vite build",
     "lint": "eslint my-react-app",
     "preview": "vite preview",
-    "deploy" : "gh-pages -d dist"
+   "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@pixi/react": "^7.1.2",

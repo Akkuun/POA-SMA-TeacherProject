@@ -251,20 +251,20 @@ export class Student extends Agent {
     updateSpritesBasedOnStrategy() {
         if (this._wantCandyStrategy.name === "WhenTeacherIsFarBehind") {
             //console.log("WhenTeacherIsFarBehind");
-            this.setInitSprite('/POA-SMA-TeacherProject/src/assets/student_2.png');
-            this.setCandySprite('/POA-SMA-TeacherProject/src/assets/student_2_candy.png');
+            this.setInitSprite('assets/student_2.png');
+            this.setCandySprite('assets/student_2_candy.png');
         } else if (this._wantCandyStrategy.name === "WhenAnotherStudentStartsMoving") {
             //console.log("WhenAnotherStudentStartsMoving");
-            this.setInitSprite('/POA-SMA-TeacherProject/src/assets/student_3.png');
-            this.setCandySprite('/POA-SMA-TeacherProject/src/assets/student_3_candy.png');
+            this.setInitSprite('assets/student_3.png');
+            this.setCandySprite('assets/student_3_candy.png');
         } else if (this._wantCandyStrategy.name === "Every5Seconds") {
             //console.log("Every5Seconds");
-            this.setInitSprite('/POA-SMA-TeacherProject/src/assets/student_6.png');
-            this.setCandySprite('/POA-SMA-TeacherProject/src/assets/student_6_candy.png');
+            this.setInitSprite('assets/student_6.png');
+            this.setCandySprite('assets/student_6_candy.png');
         } else {
             //console.log("Default");
-            this.setInitSprite('/POA-SMA-TeacherProject/src/assets/student_1.png');
-            this.setCandySprite('/POA-SMA-TeacherProject/src/assets/student_1_candy.png');
+            this.setInitSprite('assets/student_1.png');
+            this.setCandySprite('assets/student_1_candy.png');
         }
     }
 

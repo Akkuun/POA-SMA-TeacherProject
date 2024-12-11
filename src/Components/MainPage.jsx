@@ -103,7 +103,7 @@ function fillDeskInClassroom(nteacher, classroom, app, teacherSpeed, teacherFocu
 let opened_door_sprite;
 
 function displayClassroom(app, classroom) {
-    PIXI.Assets.load('/POA-SMA-TeacherProject/src/assets/map.png').then((texture) => {
+    PIXI.Assets.load('assets/map.png').then((texture) => {
         const terrainSprite = new PIXI.Sprite(texture);
         terrainSprite.width = window.innerWidth;  // Redimensionner pour prendre toute la largeur
         terrainSprite.height = window.innerHeight; // Redimensionner pour prendre toute la hauteur
@@ -112,7 +112,7 @@ function displayClassroom(app, classroom) {
         terrainSprite.zIndex = -2;
         app.stage.addChild(terrainSprite);
     });
-    PIXI.Assets.load('/POA-SMA-TeacherProject/src/assets/opened_door.png').then((texture) => {
+    PIXI.Assets.load('assets/opened_door.png').then((texture) => {
         opened_door_sprite = new PIXI.Sprite(texture);
         opened_door_sprite.width = window.innerWidth;  // Redimensionner pour prendre toute la largeur
         opened_door_sprite.height = window.innerHeight; // Redimensionner pour prendre toute la hauteur
@@ -123,7 +123,7 @@ function displayClassroom(app, classroom) {
     });
     // Charger et afficher les bureaux
     for (let desk of classroom._desksStudent) {
-        PIXI.Assets.load('/POA-SMA-TeacherProject/src/assets/student_desk.png').then((texture) => {
+        PIXI.Assets.load('assets/student_desk.png').then((texture) => {
             const deskSprite = new PIXI.Sprite(texture);
             deskSprite.zIndex = 10;
             deskSprite.width = desk.width;
@@ -136,7 +136,7 @@ function displayClassroom(app, classroom) {
     }
 
     for (let desk of classroom._desksTeacher) {
-        PIXI.Assets.load('/POA-SMA-TeacherProject/src/assets/teacher_desk.png').then((texture) => {
+        PIXI.Assets.load('assets/teacher_desk.png').then((texture) => {
             const deskSprite = new PIXI.Sprite(texture);
             deskSprite.zIndex = 10;
             deskSprite.width = desk.width;
@@ -155,7 +155,7 @@ function displayClassroom(app, classroom) {
     }
 
     for (let teacher of classroom._teachers) {
-        PIXI.Assets.load('/POA-SMA-TeacherProject/src/assets/teacher.png').then((texture) => {
+        PIXI.Assets.load('assets/teacher.png').then((texture) => {
             const teacherSprite = new PIXI.Sprite(texture);
             teacherSprite.zIndex = 11;
             teacherSprite.width = teacher._width;
@@ -169,7 +169,7 @@ function displayClassroom(app, classroom) {
 
     // Charger et afficher les bonbons
     let candy = classroom._candy;
-    PIXI.Assets.load('/POA-SMA-TeacherProject/src/assets/jar_candy_full.png').then((texture) => {
+    PIXI.Assets.load('assets/jar_candy_full.png').then((texture) => {
         const candySprite = new PIXI.Sprite(texture);
         candySprite.zIndex = 11;
         candySprite.width = 20;
@@ -211,7 +211,7 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
     displayClassroom(app, classroom);
 
     PIXI.Assets.addBundle('fonts', [
-        {alias: 'Chalkboard', src: '/POA-SMA-TeacherProject/src/assets/chalkboard.ttf'}
+        {alias: 'Chalkboard', src: 'assets/chalkboard.ttf'}
     ]);
     PIXI.Assets.loadBundle('fonts');
 
