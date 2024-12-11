@@ -12,6 +12,7 @@ export class Agent {
     _app;
     _classroom;
     _gridPos = {x: -1, y: -1};
+    _speed = 1;
 
     constructor(p_app, p_classroom) {
         this._app = p_app;

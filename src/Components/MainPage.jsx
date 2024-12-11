@@ -44,7 +44,7 @@ function updateCandiesTakenText(candiesTakenText) {
     candiesTakenText.text = 'Candies taken: ' + nCandiesTaken;
 }
 
-function fillGridCell(nstudent, classroom, app) {
+function fillGridCell(nstudent, classroom, app, studentSpeed, studentCandyStrategy, studentPathStrategy) {
     while (deskCount < nstudent && (currentX <= endCol || currentY <= endRow)) { // while there are still desks to place and we haven't reached the end of the classroom
         if (currentY > endRow) {
             currentY = startRow;
@@ -56,13 +56,18 @@ function fillGridCell(nstudent, classroom, app) {
         if (classroom._grid[currentY][currentX] === 0) {
             classroom.addDeskStudent(new Desk(currentX, currentY));
             classroom.addStudent(new Student(app, classroom));
+            // --------- Initialize the student's state from menu here
+            classroom._students[classroom._students.length - 1]._speed = studentSpeed;
+            classroom._students[classroom._students.length - 1].setWantCandyStrategy(studentCandyStrategy);
+            classroom._students[classroom._students.length - 1].setPathStrategy(studentPathStrategy);
+            // ---------
             currentY += spacingY;
             deskCount++;
         }
     }
 }
 
-function fillDeskInClassroom(nteacher, classroom, app) {
+function fillDeskInClassroom(nteacher, classroom, app, teacherSpeed, teacherFocusStrategy) {
     let deskCountTeacher = 0;
     let currentXTeacher = startColTeacher;
     let currentYTeacher = startRowTeacher;
@@ -85,6 +90,10 @@ function fillDeskInClassroom(nteacher, classroom, app) {
         if (classroom._grid[currentYTeacher][currentXTeacher] === 0) {
             classroom.addDeskTeacher(new Desk(currentXTeacher, currentYTeacher));
             classroom.addTeacher(new Teacher(app, classroom));
+            // --------- Initialize the teacher's state from menu here
+            classroom._teachers[classroom._teachers.length - 1]._speed = teacherSpeed;
+            classroom._teachers[classroom._teachers.length - 1].setChoseStudentStrategy(teacherFocusStrategy);
+            // ---------
             currentYTeacher += spacingY;
             deskCountTeacher++;
         }
@@ -141,17 +150,10 @@ function displayClassroom(app, classroom) {
 
     // Charger et afficher les students
     for (let student of classroom._students) {
-        PIXI.Assets.load('../../src/assets/student.png').then((texture) => {
-            const studentSprite = new PIXI.Sprite(texture);
-            studentSprite.zIndex = 11;
-            studentSprite.width = student._width;
-            studentSprite.height = student._height;
-            studentSprite.anchor.set(0.5, 1); // Set the anchor point to the center of the sprite to (1, 0.5) for each Agent's sprite to center it on the middle of the cell
-            app.stage.addChild(studentSprite);
-            student.setSprite(studentSprite);
-            student.display();
-        });
+        student.updateSpritesBasedOnStrategy();
+        student.changeSprite(student._initSprite);
     }
+
     for (let teacher of classroom._teachers) {
         PIXI.Assets.load('../../src/assets/teacher.png').then((texture) => {
             const teacherSprite = new PIXI.Sprite(texture);
@@ -182,7 +184,9 @@ function displayClassroom(app, classroom) {
 }
 
 // eslint-disable-next-line react/prop-types
-const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber, setTeacherNumber, teacherNumber}) => {
+const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber, setTeacherNumber, teacherNumber, studentSpeed, setStudentSpeed, teacherSpeed, setTeacherSpeed,
+    studentCandyStrategy, setStudentCandyStrategy, teacherFocusStrategy, setTeacherFocusStrategy, studentPathStrategy, setStudentPathStrategy
+}) => {
     const app = new PIXI.Application({
         width: window.innerWidth,  // Largeur de la fenêtre
         height: window.innerHeight, // Hauteur de la fenêtre
@@ -195,14 +199,14 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
     root.appendChild(app.view);
 
     const classroom = new Classroom(app);
-    classroom.setCandy({x: 30, y: 10});
+    classroom.setCandy({x: 29, y: 14});
     const nstudent = studentNumber;
     const nteacher = teacherNumber;
     classroom._nstudents = nstudent;
     classroom._nteachers = nteacher;
 
-    fillGridCell(nstudent, classroom, app);
-    fillDeskInClassroom(nteacher, classroom, app);
+    fillGridCell(nstudent, classroom, app, studentSpeed, studentCandyStrategy, studentPathStrategy);
+    fillDeskInClassroom(nteacher, classroom, app, teacherSpeed, teacherFocusStrategy);
 
     displayClassroom(app, classroom);
 
@@ -233,9 +237,7 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
 
     classroom.displayDesks(app);
     app.ticker.maxFPS = maxFPS;
-
     app.ticker.add(() => {
-
         if (classroom._state === "StartAnimation") {
             classroom.agentEnter();
             if (classroom._agentsWaitingToEnter.length === 0 && opened_door_sprite) {
@@ -244,17 +246,20 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
             }
         }
         nCandiesTaken = 0;
-        classroom.getHeatmap();
         heatmap = classroom.getHeatMapObject();
         //console.log(heatmap);
         for (let i = 0; i < nstudent; i++) {
             let student = classroom._students[i];
-            student.choseAgentAction();
+            for (let actions = 0; actions < student._speed; actions++) {
+                student.choseAgentAction();
+            }
             nCandiesTaken += student._candies;
         }
         for (let i = 0; i < nteacher; i++) {
             let teacher = classroom._teachers[i];
-            teacher.choseAgentAction();
+            for (let actions = 0; actions < teacher._speed; actions++) {
+                teacher.choseAgentAction();
+            }
             teacher.displayDebugPatrouille();
         }
         updateCandiesTakenText(candiesTakenText);

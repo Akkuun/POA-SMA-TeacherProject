@@ -1,0 +1,21 @@
+#heatmap {
+    background-color: black;
+    color: white;
+    display: flex;
+    position: fixed;
+    margin-top: 2%;
+    margin-left: 2%;
+}
+#heatmap:hover {
+    background-color: #2b1b1b;
+    border-color: black;
+}
+
+#heatmapBlack {
+     background-color: black;
+     color: white;
+     display: flex;
+     position: fixed;
+     margin-top: 2%;
+     margin-left: 15%;
+ }
