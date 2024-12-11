@@ -237,7 +237,12 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
 
     classroom.displayDesks(app);
     app.ticker.maxFPS = maxFPS;
+    let frames = 0;
     app.ticker.add(() => {
+        if (frames < 10) {
+            frames++;
+            return;
+        }
         if (classroom._state === "StartAnimation") {
             classroom.agentEnter();
             if (classroom._agentsWaitingToEnter.length === 0 && opened_door_sprite) {
