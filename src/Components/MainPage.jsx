@@ -1,10 +1,12 @@
 import * as PIXI from 'pixi.js';
 
-import Classroom, {cellUnit, classroom_ncols, GridCoordsToDisplayCoords} from './Classroom';
+import Classroom, {cellUnit, classroom_ncols, GridCoordsToDisplayCoords, GridCellCenterForDisplay} from './Classroom';
 import Student from './Student';
 import {Teacher} from './Teacher';
 import {DEBUG, DownVector, RightVector, vecDot, vecLength, WindowHeight, WindowWidth} from './Global';
 import {Desk} from "./Desk.jsx";
+import BadApple from '/assets/frames.json?url';
+import badappleaudio from '/assets/bad-apple.mp3';
 
 import '../styles/css/MainPage.css';
 
@@ -31,6 +33,98 @@ const endColTeacher = classroom_ncols - 1;
 
 
 let nCandiesTaken = 0;
+
+function displayFrame(frame, pixels) {
+    console.log(frame);
+    for (let i = 0; i < 27; i++) {
+        for (let j = 0; j < 41; j++) {
+            try {
+                if (frame[i][j] === 1) {
+                    let coords = GridCellCenterForDisplay(j, i);
+                    pixels[i*41+j].x = coords.x;
+                    pixels[i*41+j].y = coords.y;
+                } else {
+                    pixels[i*41+j].x = -1;
+                    pixels[i*41+j].y = -1;
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    }
+}
+let badAppleAudioPlayed = false;
+function playBadApple(oldapp) {
+    document.getElementById("heatmap").style.display = "none";
+    document.getElementById("heatmapBlack").style.display = "none";
+    let pixels = [];
+    // clear the oldapp
+    oldapp.ticker.stop();
+    oldapp.destroy(true, {children: true});
+    const app = new PIXI.Application({
+        width: window.innerWidth,  // Largeur de la fenêtre
+        height: window.innerHeight, // Hauteur de la fenêtre
+        backgroundColor: 0x1099bb,
+        sortableChildren: true,
+    });
+    app.stage.sortableChildren = true;
+
+    let root = document.getElementById("root");
+    root.appendChild(app.view);
+
+    app.ticker = new PIXI.Ticker();
+    PIXI.Assets.load('assets/map.png').then((texture) => {
+        const terrainSprite = new PIXI.Sprite(texture);
+        terrainSprite.width = window.innerWidth;  // Redimensionner pour prendre toute la largeur
+        terrainSprite.height = window.innerHeight; // Redimensionner pour prendre toute la hauteur
+        terrainSprite.x = (window.innerWidth - terrainSprite.width); // Centrer horizontalement
+        terrainSprite.y = (window.innerHeight - terrainSprite.height); // Centrer verticalement
+        terrainSprite.zIndex = -1;
+        app.stage.addChild(terrainSprite);
+    });
+    for (let i = 0; i < 27*41; i++) {
+        PIXI.Assets.load('assets/student_2.png').then((texture) => {
+            const studentSprite = new PIXI.Sprite(texture);
+            studentSprite.zIndex = 11;
+            studentSprite.width = 26 / 545 * WindowWidth * 0.46;
+            studentSprite.height = 37 / 405 * WindowHeight * 50 / 68;
+            studentSprite.anchor.set(0.5, 1); // Set the anchor point to the center of the sprite to (1, 0.5) for each Agent's sprite to center it on the middle of the cell
+            app.stage.addChild(studentSprite);
+            studentSprite.x = -1;
+            studentSprite.y = -1;
+            pixels.push(studentSprite);
+        });
+    }
+    fetch(BadApple)
+    .then(response => response.json())
+    .then(frames => {
+        app.ticker.maxFPS = 30;
+        let frame = 0;
+        let audio = new Audio(badappleaudio);
+        if (!badAppleAudioPlayed) {
+            audio.play();
+            badAppleAudioPlayed = true;
+        }
+
+        app.ticker.add(() => {
+            if (frame < frames.length) {
+                displayFrame(frames[frame], pixels);
+                frame++;
+            } else {
+                frame = 0;
+            }
+            if (frame >= 6574) {
+                // reload the window
+                window.location.href = window.location.href;
+            }
+        });
+
+        app.ticker.start();
+    })
+    .catch(error => {
+        console.error('Error loading frames:', error);
+    });
+}
 let heatmap = [];
 
 function updateCandiesTakenText(candiesTakenText) {
@@ -184,7 +278,7 @@ function displayClassroom(app, classroom) {
 }
 
 // eslint-disable-next-line react/prop-types
-const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber, setTeacherNumber, teacherNumber, studentSpeed, setStudentSpeed, teacherSpeed, setTeacherSpeed,
+const MainPage = ({studentNumber, setStudentNumber, setTeacherNumber, teacherNumber, studentSpeed, setStudentSpeed, teacherSpeed, setTeacherSpeed,
     studentCandyStrategy, setStudentCandyStrategy, teacherFocusStrategy, setTeacherFocusStrategy, studentPathStrategy, setStudentPathStrategy
 }) => {
     const app = new PIXI.Application({
@@ -266,6 +360,17 @@ const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber,
         updateCandiesTakenText(candiesTakenText);
         if (DEBUG) classroom.displayDebugGrid(); // RED = Student, GREEN = Teacher, BLUE = Empty, BLACK = Something else
     });
+
+    const handleKeyDown = (event) => {
+        if (event.ctrlKey && event.altKey && event.key === 'b') {
+            console.log('Playing Bad Apple');
+            playBadApple(app);
+        }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+
 
     return (
         <div>
