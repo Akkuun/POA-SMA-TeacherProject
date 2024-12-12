@@ -4,8 +4,6 @@ import '../../src/styles/css/MenuComponent.css';
 
 const MenuComponent = ({
                            startGame,
-                           sweetNumber,
-                           setSweetNumber,
                            studentNumber,
                            setStudentNumber,
                            setTeacherNumber,
@@ -68,10 +66,7 @@ const MenuComponent = ({
                     </select>
                 </div>
                 <div id="menu-column">
-                    <h2>Game Parameters</h2>
-                    <h2>Number of candy: {sweetNumber}</h2>
-                    <button onClick={() => setSweetNumber(clamp(sweetNumber - 1, 1, sweetNumber))}>Remove sweet jar</button>
-                    <button onClick={() => setSweetNumber(sweetNumber + 1)}>Add sweet jar</button>
+                    <h2>Game</h2>
                     <button onClick={startGame} id="start-game">Start Game</button>
                 </div>
             </div>

@@ -276,7 +276,7 @@ function displayClassroom(app, classroom) {
 }
 
 // eslint-disable-next-line react/prop-types
-const MainPage = ({sweetNumber, studentNumber, setSweetNumber, setStudentNumber, setTeacherNumber, teacherNumber, studentSpeed, setStudentSpeed, teacherSpeed, setTeacherSpeed,
+const MainPage = ({studentNumber, setStudentNumber, setTeacherNumber, teacherNumber, studentSpeed, setStudentSpeed, teacherSpeed, setTeacherSpeed,
     studentCandyStrategy, setStudentCandyStrategy, teacherFocusStrategy, setTeacherFocusStrategy, studentPathStrategy, setStudentPathStrategy
 }) => {
     const app = new PIXI.Application({

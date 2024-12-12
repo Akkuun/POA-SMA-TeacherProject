@@ -5,7 +5,6 @@ import MenuComponent from './MenuComponent.jsx';
 
 function App() {
     const [gameStarted, setGameStarted] = useState(false);
-    const [sweetNumber, setSweetNumber] = useState(1);
     const [studentNumber, setStudentNumber] = useState(20);
     const [teacherNumber, setTeacherNumber] = useState(1);
     const [studentSpeed, setStudentSpeed] = useState(1);
@@ -22,9 +21,7 @@ function App() {
         <div>
             {gameStarted ? (
                 <MainPage
-                    sweetNumber={sweetNumber}
                     studentNumber={studentNumber}
-                    setSweetNumber={setSweetNumber}
                     setStudentNumber={setStudentNumber}
                     teacherNumber={teacherNumber}
                     setTeacherNumber={setTeacherNumber}
@@ -44,8 +41,6 @@ function App() {
             ) : (
                 <MenuComponent
                     startGame={startGame}
-                    sweetNumber={sweetNumber}
-                    setSweetNumber={setSweetNumber}
                     studentNumber={studentNumber}
                     setStudentNumber={setStudentNumber}
                     teacherNumber={teacherNumber}
