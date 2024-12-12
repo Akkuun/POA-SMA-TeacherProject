@@ -113,8 +113,7 @@ function playBadApple(oldapp) {
             } else {
                 frame = 0;
             }
-            //if (frame === 6574) {
-            if (frame <= 10) {
+            if (frame === 6574) {
                 // reload the window
                 window.location.href = window.location.href;
             }
