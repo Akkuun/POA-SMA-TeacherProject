@@ -114,13 +114,11 @@ class Graph {
 
     A_star(start, destination) {
         let startNode = this.nodes[`${start.x},${start.y}`];
-        console.log(start);
         const destinationNode = this.nodes[`${destination.x},${destination.y}`];
-        console.log(destination);
         if (!startNode || !destinationNode) {
-            console.error("Start or destination node is invalid.");
-            console.log("Start Node:", startNode);
-            console.log("Destination Node:", destinationNode);
+            //console.error("Start or destination node is invalid.");
+            //console.log("Start Node:", startNode);
+            //console.log("Destination Node:", destinationNode);
             return [];
         }
 
@@ -164,7 +162,7 @@ class Graph {
             }
         }
 
-        console.error("No path found.");
+        //console.error("No path found.");
         return [];
     }
 

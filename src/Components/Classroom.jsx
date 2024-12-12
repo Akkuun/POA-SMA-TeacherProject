@@ -1,9 +1,14 @@
 import {DownVector, RightVector, TopLeft} from "./Global.jsx";
-import {Student} from "./Student.jsx";
+import {Student, StudentState} from "./Student.jsx";
+import {TeacherState} from "./Teacher.jsx";
 import {Desk} from "./Desk.jsx";
 
 import * as PIXI from 'pixi.js';
 
+export const ClassroomState = {
+    StartAnimation: "StartAnimation",
+    Playing: "Playing",
+}
 
 export const classroom_nrows = 27;
 export const classroom_ncols = 41;
@@ -41,12 +46,19 @@ export class Classroom {
     _agentsWaitingToEnter = []; // array that contains the agents waiting to enter the classroom for a start animation
     _students = []; // array that contains the students in the classroom
     _teachers = []; // array that contains the teachers in the classroom
+    _nstudents;
+    _nteachers;
 
-    _grid = []; // array that contains the grid of the classroom. Each cell can contain an agent or 0 if the cell is empty, or something else if the cell is occupied by something else (TODO)
+    _grid = []; // array that contains the grid of the classroom. Each cell can contain an agent or 0 if the cell is empty, or something else if the cell is occupied by something else
+
+    _state;
+    _heatmap = [];
 
     constructor(app) {
         this._app = app;
         this.initializeGrid();
+        this.initHeatmap();
+        this._state = ClassroomState.StartAnimation;
     }
 
     forceAgentPosForDebug(agent, pos) {
@@ -75,7 +87,6 @@ export class Classroom {
         this._students.push(student);
         this.addAgent(student);
         this.assignDeskToStudent(student);
-        this.agentEnter();
     }
 
 
@@ -94,7 +105,6 @@ export class Classroom {
         this._teachers.push(teacher);
         this.addAgent(teacher);
         this.assignDeskToTeacher(teacher);
-        this.agentEnter();
     }
 
     addAgent(agent) {
@@ -107,30 +117,38 @@ export class Classroom {
     }
 
     agentEnter() { // Will be useful to make the agents enter the classroom in sequence and walk to their predefined position
-        let agent = this._agentsWaitingToEnter.pop();
-
-        // Replace this bloc by either the entrance position and check if it is empty or a predefined position for each agent
-        let pos = {
-            x: Math.floor(Math.random() * (classroom_ncols - 1)),
-            y: Math.floor(Math.random() * (classroom_nrows - 1))
+        if (this._agentsWaitingToEnter.length === 0 && this._students.length === this._nstudents && this._teachers.length === this._nteachers) {
+            for (let student of this._students) {
+                if (student._state === StudentState.StartAnimation) {
+                    return;
+                }
+            }
+            for (let teacher of this._teachers) {
+                if (teacher._state === TeacherState.StartAnimation) {
+                    return;
+                }
+            }
+            this._state = ClassroomState.Playing;
+            return;
         }
-        while (this._grid[pos.y][pos.x] !== 0) {
-            pos = {
-                x: Math.floor(Math.random() * (classroom_ncols - 1)),
-                y: Math.floor(Math.random() * (classroom_nrows - 1))
+        let enter1 = {x: 17, y : 1};
+        let enter2 = {x: 18, y : 1};
+        if (this._grid[enter1.y][enter1.x] === 0) {
+            let agent1 = this._agentsWaitingToEnter.pop();
+            if (agent1 !== undefined) {
+                this._grid[enter1.y][enter1.x] = agent1;
+                agent1.setGridPos(enter1);
+                agent1.display();
             }
         }
-        this._grid[pos.y][pos.x] = agent;
-        // End of the bloc
-        if (agent instanceof Student) {
-            this._grid[pos.y][pos.x] = 0;
-            pos = agent._desk._coordGrid;
-            this._grid[pos.y][pos.x] = agent;
-
+        if (this._grid[enter2.y][enter2.x] === 0) {
+            let agent2 = this._agentsWaitingToEnter.pop();
+            if (agent2 !== undefined) {
+                this._grid[enter2.y][enter2.x] = agent2;
+                agent2.setGridPos(enter2);
+                agent2.display();
+            }
         }
-
-        agent.setGridPos(pos);
-        agent.display();
     }
 
     moveAgent(agent, oldPos, newPos) {
@@ -138,6 +156,9 @@ export class Classroom {
         if (this._grid[oldPos.y][oldPos.x] === agent && this._grid[newPos.y][newPos.x] === 0) {
             this._grid[oldPos.y][oldPos.x] = 0;
             this._grid[newPos.y][newPos.x] = agent;
+            if (agent._state !== "StartAnimation" && agent instanceof Student) {
+                this._heatmap[newPos.y][newPos.x]++;
+            }
             return true;
         } else {
             return false;
@@ -310,6 +331,68 @@ export class Classroom {
             app.stage.addChild(graphics);
         }
     }
+
+    initHeatmap() {
+        for (let i = 0; i < classroom_nrows; i++) {
+            let row = [];
+            for (let j = 0; j < classroom_ncols; j++) {
+                row.push(0);
+            }
+            this._heatmap.push(row);
+        }
+    }
+
+    // on parcours toutes les cases, et si on trouve un student, on incrémente la case de 1
+    getHeatmap() {
+        // for (let i = 0; i < classroom_nrows; i++) {
+        //     for (let j = 0; j < classroom_ncols; j++) {
+
+        //         // pour ne pas comtper les cases où les étudiants sont à leur bureau sans bouger ( ce qui fausserait la heatmap)
+        //         if (this._grid[i][j] instanceof Student && !(this._grid[i][j + 1] instanceof Desk) &&  !(this._grid[i][j]._state === "StartAnimation")) {
+        //             this._heatmap[i][j]++;
+        //         }
+        //     }
+        // }
+    }
+
+    displayHeatmap() {
+        let graphics = new PIXI.Graphics();
+        let max = 0;
+        for (let i = 0; i < classroom_nrows; i++) {
+            for (let j = 0; j < classroom_ncols; j++) {
+                max = Math.max(max, this._heatmap[i][j]);
+            }
+        }
+        for (let i = 0; i < classroom_nrows; i++) {
+            for (let j = 0; j < classroom_ncols; j++) {
+                let coords = GridCoordsToDisplayCoords(j, i);
+                let points = [
+                    new PIXI.Point(coords.x, coords.y),
+                    new PIXI.Point(coords.x + cellUnit.x * RightVector.x, coords.y + cellUnit.x * RightVector.y),
+                    new PIXI.Point(coords.x + cellUnit.x * RightVector.x + cellUnit.y * DownVector.x, coords.y + cellUnit.x * RightVector.y + cellUnit.y * DownVector.y),
+                    new PIXI.Point(coords.x + cellUnit.y * DownVector.x, coords.y + cellUnit.y * DownVector.y)
+                ];
+                let cellDisplay = new PIXI.Polygon(points);
+                // draw the border of the cell
+                graphics.lineStyle(1, 0x000000, 1);
+                graphics.beginFill(0xFF0000, this._heatmap[i][j] / max);
+                graphics.drawPolygon(cellDisplay);
+                graphics.endFill();
+            }
+        }
+        graphics.zIndex = 1;
+        this._app.stage.addChild(graphics);
+    }
+
+    getHeatMapObject() {
+        return this._heatmap;
+    }
+
+    //partie stat : on note a chaque fois qu'un élève pars et quand il revient et on recupère :
+    // le ratio de recupération des élèves
+    // le temps de voyage moyen des élèves
+    // le nombre de déplacement moyen des élèves
+    // tous ces paramètre en fonction de la stratégie choisi
 
 }
 

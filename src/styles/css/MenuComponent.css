@@ -1,0 +1,66 @@
+/* Les enfants du menu seront donc en colonne*/
+#menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    padding: 20px;
+    box-sizing: border-box;
+    color: white;
+}
+
+/*permet de faire que les enfants soir les un en dessous des autre si il ne tienne pas sur la ligne*/
+#menu-columns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+}
+
+
+#menu-column {
+    flex: 1; /*prend tout l'espace dispo*/
+    min-width: 300px;
+    margin: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 5px;
+    color: white;
+}
+
+#menu-column h2, #menu-column button, #menu-column select {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#start-game{
+    margin-top : 20px;
+}
+
+/* style des bouton et des menu déroulant*/
+#menu-column button, #menu-column select {
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #1a1a1a;
+    color: white;
+    cursor: pointer;
+    transition: border-color 0.25s;
+    margin-bottom: 10px;
+}
+
+#menu-column button:hover, #menu-column select:hover {
+    border-color: #646cff;
+}
+
+#menu-column button:focus, #menu-column select:focus {
+    outline: 4px auto -webkit-focus-ring-color;
+}
