@@ -1,12 +1,35 @@
-# React + Vite
+# Candy Rush
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Projet de programmation orientée agents. 
 
-Currently, two official plugins are available:
+Les élèves doivent ramasser des bonbons sans se faire attraper par la maîtresse en utilisant diverses stratégies !
 
+Version en ligne : https://akkuun.github.io/POA-SMA-TeacherProject/
+
+Vidéo :
 
 https://github.com/user-attachments/assets/7876e3f0-f27d-4fcc-88a2-978c54369a02
 
+# Installation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Cloner le dépôt git :
+
+```bash
+git clone https://github.com/Akkuun/POA-SMA-TeacherProject
+```
+
+Installer les dépendances :
+
+```bash
+npm install
+```
+
+Lancer le serveur local :
+
+```bash
+npm run dev
+```
+
+# Bad Apple
+
+Faites CTRL + ALT + B après avoir démarré une partie pour l'easter egg !
