@@ -55,6 +55,8 @@ function displayFrame(frame, pixels) {
 }
 let badAppleAudioPlayed = false;
 function playBadApple(oldapp) {
+    document.getElementById("heatmap").style.display = "none";
+    document.getElementById("heatmapBlack").style.display = "none";
     let pixels = [];
     // clear the oldapp
     oldapp.ticker.stop();
@@ -111,9 +113,10 @@ function playBadApple(oldapp) {
             } else {
                 frame = 0;
             }
-            if (frame === 6574) {
+            //if (frame === 6574) {
+            if (frame <= 10) {
                 // reload the window
-                window.location.reload();
+                window.location.href = window.location.href;
             }
         });
 
@@ -370,11 +373,7 @@ const MainPage = ({studentNumber, setStudentNumber, setTeacherNumber, teacherNum
 
 
 
-    return () => {
-        window.removeEventListener('keydown', handleKeyDown);
-        root.removeChild(app.view);
-        app.destroy(true, {children: true});
-        return (
+    return (
         <div>
             <button id="heatmap" onClick={
                 () => {
@@ -477,7 +476,6 @@ const MainPage = ({studentNumber, setStudentNumber, setTeacherNumber, teacherNum
         </div>
 
     );
-}
 };
 
 export default MainPage;
