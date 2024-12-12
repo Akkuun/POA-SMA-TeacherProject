@@ -93,7 +93,7 @@ function playBadApple(oldapp) {
             pixels.push(studentSprite);
         });
     }
-    fetch('http://localhost:5173/POA-SMA-TeacherProject/assets/frames.json')
+    fetch(BadApple)
     .then(response => response.json())
     .then(frames => {
         app.ticker.maxFPS = 30;
