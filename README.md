@@ -33,3 +33,7 @@ npm run dev
 # Bad Apple
 
 Faites CTRL + ALT + B après avoir démarré une partie pour l'easter egg !
+
+
+https://github.com/user-attachments/assets/efe81e25-78c4-4922-9f05-1d368adb089b
+
