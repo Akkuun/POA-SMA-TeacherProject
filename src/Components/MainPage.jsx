@@ -35,7 +35,7 @@ const endColTeacher = classroom_ncols - 1;
 let nCandiesTaken = 0;
 
 function displayFrame(frame, pixels) {
-    console.log(frame);
+    //console.log(frame);
     for (let i = 0; i < 27; i++) {
         for (let j = 0; j < 41; j++) {
             try {
