@@ -6,6 +6,7 @@ import {Teacher} from './Teacher';
 import {DEBUG, DownVector, RightVector, vecDot, vecLength, WindowHeight, WindowWidth} from './Global';
 import {Desk} from "./Desk.jsx";
 import BadApple from '/assets/frames.json?url';
+import Lyrics from '/assets/lyrics.json?url';
 import badappleaudio from '/assets/bad-apple.mp3';
 
 import '../styles/css/MainPage.css';
@@ -53,8 +54,59 @@ function displayFrame(frame, pixels) {
         }
     }
 }
+function displayLyrics(lyrics, frame, lyricsText) {
+    // lyrics is an array of objects with the following structure:
+    // {
+    //     "start-frame": "Lyric text",
+    //     ...
+    // }
+    // The start-frame is the frame number at which the lyric should be displayed
+    // The lyric text is the text to be displayed
+    // The lyrics at start-frame should be displayed if frame is greater than or equal to start-frame and less than the next start-frame
+
+
+    // Find the lyric to display
+    let lyric = null;
+    for (let i = 0; i < lyrics.length; i++) {
+        //console.log("compare", frame, lyrics[i]["frame"]);
+        if (frame >= lyrics[i]["frame"]) {
+            lyric = lyrics[i]["lyric"];
+        }
+    }
+    if (lyricsText.style.fontFamily !== 'Chalkboard') {
+        try {
+            lyricsText.style.fontFamily = 'Chalkboard';
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    if (lyric) {
+        lyricsText.text = lyric;
+    } else {
+        lyricsText.text = '';
+    }
+
+}
 let badAppleAudioPlayed = false;
 function playBadApple(oldapp) {
+    let lyricsText = new PIXI.Text('Candies taken: ' + nCandiesTaken, {
+        fontFamily: 'Arial',
+        fontSize: 20,
+        fill: 0xFFFFFF
+    });
+    lyricsText.x = WindowWidth * 0.63;
+    lyricsText.y = WindowHeight * 0.18;
+    lyricsText.zIndex = 20;
+    lyricsText.style.fontSize = 20 * vecLength(DownVector) / 405;
+    try {
+        lyricsText.style.fontFamily = 'Chalkboard';
+    } catch (e) {
+        console.log(e);
+    }
+    lyricsText.rotation = Math.acos(vecDot({x: 1, y: 0}, DownVector) / (vecLength({
+        x: 1,
+        y: 0
+    }) * vecLength(DownVector)));
     document.getElementById("heatmap").style.display = "none";
     document.getElementById("heatmapBlack").style.display = "none";
     let pixels = [];
@@ -68,7 +120,7 @@ function playBadApple(oldapp) {
         sortableChildren: true,
     });
     app.stage.sortableChildren = true;
-
+    app.stage.addChild(lyricsText);
     let root = document.getElementById("root");
     root.appendChild(app.view);
 
@@ -95,35 +147,40 @@ function playBadApple(oldapp) {
             pixels.push(studentSprite);
         });
     }
-    fetch(BadApple)
-    .then(response => response.json())
-    .then(frames => {
-        app.ticker.maxFPS = 30;
-        let frame = 0;
-        let audio = new Audio(badappleaudio);
-        if (!badAppleAudioPlayed) {
-            audio.play();
-            badAppleAudioPlayed = true;
-        }
-
-        app.ticker.add(() => {
-            if (frame < frames.length) {
-                displayFrame(frames[frame], pixels);
-                frame++;
-            } else {
-                frame = 0;
+    Promise.all([
+        fetch(BadApple).then(response => response.json()),
+        fetch(Lyrics).then(response => response.json())
+    ])
+        .then(([frames, lyrics]) => {
+            app.ticker.maxFPS = 30;
+            let frame = 0;
+            let audio = new Audio(badappleaudio);
+            if (!badAppleAudioPlayed) {
+                audio.play();
+                badAppleAudioPlayed = true;
             }
-            if (frame >= 6574) {
-                // reload the window
-                window.location.href = window.location.href;
-            }
+    
+            app.ticker.add(() => {
+                if (frame < frames.length) {
+                    displayFrame(frames[frame], pixels);
+                    // Use lyrics data here if needed
+                    // For example, display lyrics based on the current frame
+                    displayLyrics(lyrics, frame, lyricsText);
+                    frame++;
+                } else {
+                    frame = 0;
+                }
+                if (frame >= 6574) {
+                    // reload the window
+                    window.location.href = window.location.href;
+                }
+            });
+    
+            app.ticker.start();
+        })
+        .catch(error => {
+            console.error('Error loading frames or lyrics:', error);
         });
-
-        app.ticker.start();
-    })
-    .catch(error => {
-        console.error('Error loading frames:', error);
-    });
 }
 let heatmap = [];
 
